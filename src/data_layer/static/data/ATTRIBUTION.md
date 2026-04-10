@@ -4,18 +4,19 @@
 
 ## 属性克制表 (type_chart.json)
 
-- **来源**: BWIKI 洛克王国：世界 WIKI — [属性克制表](https://wiki.biligame.com/rocokingdomworld/属性克制表)
-- **许可协议**: [CC BY-NC-SA 4.0](https://creativecommons.org/licenses/by-nc-sa/4.0/)
+- **来源**: 互联网公开攻略 + 手动整理校验
+- **参考 WIKI**: [BWIKI 洛克王国：世界](https://wiki.biligame.com/rocokingdomworld/首页) (CC BY-NC-SA 4.0)
 - **整理日期**: 2026-04-10
-- **说明**: 基于 BWIKI 编辑者的贡献整理为机器可读格式。感谢 WIKI 编辑者的辛勤劳动。
+- **说明**: 数据基于多个公开攻略站交叉校验整理为机器可读格式，可与 BWIKI 验证一致性。
 
 ## 宠物性格加成表 (nature_chart.json)
 
-- **来源**: BWIKI 洛克王国：世界 WIKI
-- **许可协议**: [CC BY-NC-SA 4.0](https://creativecommons.org/licenses/by-nc-sa/4.0/)
+- **来源**: 互联网公开攻略 + 手动整理校验
+- **参考 WIKI**: [BWIKI 洛克王国：世界](https://wiki.biligame.com/rocokingdomworld/首页) (CC BY-NC-SA 4.0)
 - **整理日期**: 2026-04-10
 
 ---
 
-> **郑重提醒**: 请尊重 WIKI 编辑者的辛勤劳动！本项目遵循 CC BY-NC-SA 4.0 协议使用上述数据。
+> **郑重提醒**: 请尊重 WIKI 编辑者的辛勤劳动！
+> 本项目中通过 BWIKI API 运行时获取的精灵数据遵循 CC BY-NC-SA 4.0 协议。
 > 任何基于本项目的再分发亦须遵守同一协议。

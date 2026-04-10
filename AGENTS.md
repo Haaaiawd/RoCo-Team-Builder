@@ -109,11 +109,14 @@ src/
     │   ├── alias_index.py      ← 别名索引
     │   └── repository.py       ← 精灵仓储
     ├── wiki/
-    │   ├── gateway.py          ← httpx BWIKI 网关
+    │   ├── gateway.py          ← httpx BWIKI 网关 (含速率限制+去重+退避)
     │   ├── parser.py           ← wikitext 解析器
-    │   └── endpoint_builder.py ← URL/API 参数构造
+    │   └── endpoint_builder.py ← URL/API 参数构造 (rocokingdomworld)
     └── static/
         └── data/               ← 静态知识文件
+            ├── type_chart.json     ← 属性克制矩阵
+            ├── nature_chart.json   ← 性格加成表
+            └── ATTRIBUTION.md      ← 数据来源声明
 
 .anws/
 ├── changelog/              (升级记录)

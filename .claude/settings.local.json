@@ -1,0 +1,9 @@
+{
+  "permissions": {
+    "allow": [
+      "Bash(git:*)",
+      "Bash(sthink start:*)",
+      "Bash(ls -la \"D:/PROJECTALL/ROCO/.anws\"/*)"
+    ]
+  }
+}
