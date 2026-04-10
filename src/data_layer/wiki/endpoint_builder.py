@@ -8,7 +8,7 @@ from __future__ import annotations
 
 from urllib.parse import quote
 
-BWIKI_BASE_URL = "https://wiki.biligame.com/rocom"
+BWIKI_BASE_URL = "https://wiki.biligame.com/rocokingdomworld"
 BWIKI_API_URL = f"{BWIKI_BASE_URL}/api.php"
 
 

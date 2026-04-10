@@ -194,10 +194,10 @@ class TestBuildWikiLink:
     @pytest.mark.asyncio
     async def test_build_link_for_known_spirit(self, repository: SpiritRepository):
         url = await repository.build_wiki_link("火神")
-        assert "rocom" in url
+        assert "rocokingdomworld" in url
         assert "火神" in url or "%E7%81%AB%E7%A5%9E" in url
 
     @pytest.mark.asyncio
     async def test_build_link_via_alias(self, repository: SpiritRepository):
         url = await repository.build_wiki_link("火花")
-        assert "rocom" in url
+        assert "rocokingdomworld" in url
