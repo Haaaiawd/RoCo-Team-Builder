@@ -150,7 +150,7 @@ graph TD
 
 ### Phase 1: Foundation (基础设施)
 
-- [ ] **T2.1.1** [REQ-004]: 建立精灵卡片渲染骨架与视图模型
+- [x] **T2.1.1** [REQ-004]: 建立精灵卡片渲染骨架与视图模型
   - **描述**: 建立卡片 facade、视图模型、render policy 和模板目录，固定卡片系统输入输出契约
   - **输入**: `01_PRD.md` US-004；`02_ARCHITECTURE_OVERVIEW.md` §2 System 4、§6 物理代码结构规划；`04_SYSTEM_DESIGN/spirit-card-system.md` §4.4 建议目录结构、§5.2 跨系统接口协议、§6.1 `SpiritCardModel` / `RenderPolicy` / `RenderedSpiritCard`；T1.2.1 产出的 `SpiritProfile` 契约
   - **输出**: `src/spirit-card/app/facade.py`、`src/spirit-card/app/render_policy.py`、`src/spirit-card/mapping/view_model_builder.py`、`src/spirit-card/rendering/templates/spirit_card.html`

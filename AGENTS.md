@@ -77,14 +77,14 @@
 
 - **最新架构版本**: `.anws/v2`
 - **活动任务清单**: `.anws/v2/05_TASKS.md`
-- **待办任务数**: `20`（Level 3: 16, INT: 4）
-- **最近一次更新**: `2026-04-10 — /forge Wave 2 进行中：T1.2.2 属性克制矩阵+静态知识 facade 完成，含 BWIKI 防御加固（速率限制+去重+退避）+ URL 前缀修正，43 测试全通过`
+- **待办任务数**: `19`（Level 3: 15, INT: 4）
+- **最近一次更新**: `2026-04-10 — /forge Wave 2 进行中：T2.1.1 精灵卡片渲染骨架与视图模型完成，63 测试全通过`
 
 ### ✅ Wave 1 — Data Spine 基础脊柱 (COMPLETED)
 `T1.1.1` ✅, `T1.1.2` ✅, `T1.2.1` ✅
 
 ### 🌊 Wave 2 — Static Knowledge + Agent Bridge (IN PROGRESS)
-`T1.2.2` ✅, `T2.1.1` 🔜, `T2.1.2` 🔜
+`T1.2.2` ✅, `T2.1.1` ✅, `T2.1.2` 🔜
 
 ---
 
@@ -113,10 +113,23 @@ src/
     │   ├── parser.py           ← wikitext 解析器
     │   └── endpoint_builder.py ← URL/API 参数构造 (rocokingdomworld)
     └── static/
+        ├── type_chart.py           ← TypeMatchupStore
+        ├── mechanism_knowledge.py  ← StaticKnowledgeStore
         └── data/               ← 静态知识文件
             ├── type_chart.json     ← 属性克制矩阵
             ├── nature_chart.json   ← 性格加成表
             └── ATTRIBUTION.md      ← 数据来源声明
+├── spirit_card/                ← spirit-card-system 实现
+│   ├── app/
+│   │   ├── contracts.py        ← SpiritCardModel + RenderPolicy + RenderedSpiritCard
+│   │   ├── facade.py           ← SpiritCardFacade
+│   │   └── render_policy.py    ← 策略工厂 + 配置常量
+│   ├── mapping/
+│   │   └── view_model_builder.py ← SpiritProfile → SpiritCardModel
+│   ├── rendering/
+│   │   └── templates/spirit_card.html ← Jinja2 卡片模板
+│   └── assets/
+│       └── inline_tokens.py    ← 设计 Token (roco_adventure_journal)
 
 .anws/
 ├── changelog/              (升级记录)

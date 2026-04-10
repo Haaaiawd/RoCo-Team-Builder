@@ -1,0 +1,60 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>{{ card.display_name }} — 精灵卡片</title>
+  <style>
+    /* spirit-card-system v2 — roco_adventure_journal theme */
+    /* 完整样式将在 T2.2.1 中填充 */
+    .spirit-card {
+      background: #F9F8F4;
+      color: #333333;
+      border: 1px solid rgba(51, 51, 51, 0.10);
+      border-radius: 20px;
+      box-shadow: 0 10px 30px rgba(45, 44, 42, 0.10);
+      padding: 24px;
+      max-width: 420px;
+      font-family: system-ui, -apple-system, sans-serif;
+    }
+    .spirit-card__title {
+      border-left: 6px solid #F3C969;
+      padding-left: 12px;
+      font-size: 1.25rem;
+      font-weight: 700;
+      margin: 0 0 16px 0;
+    }
+    .spirit-card__section {
+      margin-bottom: 12px;
+    }
+    .spirit-card__label {
+      font-size: 0.75rem;
+      color: #999;
+      text-transform: uppercase;
+      margin-bottom: 4px;
+    }
+    .spirit-card__source {
+      font-size: 0.75rem;
+      color: #999;
+      margin-top: 16px;
+      border-top: 1px dashed rgba(51, 51, 51, 0.15);
+      padding-top: 8px;
+    }
+  </style>
+</head>
+<body>
+  <div class="spirit-card">
+    <h2 class="spirit-card__title">{{ card.display_name }}</h2>
+    <!-- T2.2.1: 完整卡片渲染 (系别/种族值/技能/血脉/进化链) -->
+    <div class="spirit-card__section">
+      <div class="spirit-card__label">系别</div>
+      <div>{{ card.types | join(' / ') }}</div>
+    </div>
+    {% if card.wiki_url %}
+    <div class="spirit-card__source">
+      数据来源：<a href="{{ card.wiki_url }}" target="_blank" rel="noopener">{{ card.source_label }}</a>
+    </div>
+    {% endif %}
+  </div>
+</body>
+</html>
