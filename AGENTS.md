@@ -77,8 +77,8 @@
 
 - **最新架构版本**: `.anws/v2`
 - **活动任务清单**: `.anws/v2/05_TASKS.md`
-- **待办任务数**: `18`（Level 3: 14, INT: 4）
-- **最近一次更新**: `2026-04-10 — /forge Wave 2 完成 + T3.1.1 OpenAI 兼容路由骨架完成，74 测试全通过`
+- **待办任务数**: `16`（Level 3: 12, INT: 4）
+- **最近一次更新**: `2026-04-10 — /forge Wave 3: T3.1.2 会话管理 + T2.2.1 卡片渲染完成，121 测试全通过`
 
 ### ✅ Wave 1 — Data Spine 基础脊柱 (COMPLETED)
 `T1.1.1` ✅, `T1.1.2` ✅, `T1.2.1` ✅
@@ -87,7 +87,7 @@
 `T1.2.2` ✅, `T2.1.1` ✅
 
 ### 🌊 Wave 3 — Agent Backend Foundation (IN PROGRESS)
-`T3.1.1` ✅, `T3.1.2` 🔜, `T2.2.1` 🔜
+`T3.1.1` ✅, `T3.1.2` ✅, `T2.2.1` ✅
 
 ---
 
@@ -130,14 +130,19 @@ src/
 │   ├── mapping/
 │   │   └── view_model_builder.py ← SpiritProfile → SpiritCardModel
 │   ├── rendering/
-│   │   └── templates/spirit_card.html ← Jinja2 卡片模板
+│   │   ├── template_renderer.py ← Jinja2 渲染器 + 种族值可视化
+│   │   ├── sanitization.py     ← 内容清洗 (HTML 转义 + URL 白名单)
+│   │   ├── fallback_builder.py ← 文本降级构建器
+│   │   └── templates/spirit_card.html ← 手账风卡片模板
 │   └── assets/
 │       └── inline_tokens.py    ← 设计 Token (roco_adventure_journal)
 ├── agent_backend/              ← agent-backend-system 实现
 │   ├── api/
 │   │   └── routes_openai.py    ← /v1/models + /healthz + /readyz
 │   ├── app/
-│   │   └── model_catalog.py    ← 受控虚拟模型目录
+│   │   ├── model_catalog.py    ← 受控虚拟模型目录
+│   │   ├── session_service.py  ← 会话键解析 + 内存 Registry + 闲置清理
+│   │   └── request_context.py  ← ChatRequestContext
 │   ├── runtime/                ← Agent SDK 运行时 (待实现)
 │   ├── integrations/           ← 跨系统客户端 (待实现)
 │   └── main.py                 ← FastAPI 应用入口

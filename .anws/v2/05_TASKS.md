@@ -170,7 +170,7 @@ graph TD
 
 ### Phase 2: Core (核心功能)
 
-- [ ] **T2.2.1** [REQ-004]: 完成卡片模板、内容清洗与文本降级
+- [x] **T2.2.1** [REQ-004]: 完成卡片模板、内容清洗与文本降级
   - **描述**: 将 `SpiritProfile` 渲染为手账风 Rich UI 卡片，并保证图表不可用或渲染失败时存在可读 fallback 文本
   - **输入**: `01_PRD.md` US-004、§8 DoD（Chrome/Firefox/Safari 正常渲染）；`02_ARCHITECTURE_OVERVIEW.md` §3.5 错误矩阵中的 `CARD_RENDER_`；`04_SYSTEM_DESIGN/spirit-card-system.md` §5.1 `sanitize_spirit_content` / `render_spirit_card` / `build_fallback_text`、§7.2 Card Visual Language、§11 测试策略；T2.1.1 产出的 facade/model/template 骨架
   - **输出**: `src/spirit-card/rendering/template_renderer.py`、`src/spirit-card/rendering/sanitization.py`、`src/spirit-card/rendering/fallback_builder.py`、`src/spirit-card/assets/inline_tokens.py`
