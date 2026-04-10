@@ -77,14 +77,17 @@
 
 - **最新架构版本**: `.anws/v2`
 - **活动任务清单**: `.anws/v2/05_TASKS.md`
-- **待办任务数**: `19`（Level 3: 15, INT: 4）
-- **最近一次更新**: `2026-04-10 — /forge Wave 2 进行中：T2.1.1 精灵卡片渲染骨架与视图模型完成，63 测试全通过`
+- **待办任务数**: `18`（Level 3: 14, INT: 4）
+- **最近一次更新**: `2026-04-10 — /forge Wave 2 完成 + T3.1.1 OpenAI 兼容路由骨架完成，74 测试全通过`
 
 ### ✅ Wave 1 — Data Spine 基础脊柱 (COMPLETED)
 `T1.1.1` ✅, `T1.1.2` ✅, `T1.2.1` ✅
 
-### 🌊 Wave 2 — Static Knowledge + Agent Bridge (IN PROGRESS)
-`T1.2.2` ✅, `T2.1.1` ✅, `T2.1.2` 🔜
+### ✅ Wave 2 — Static Knowledge + Card Skeleton (COMPLETED)
+`T1.2.2` ✅, `T2.1.1` ✅
+
+### 🌊 Wave 3 — Agent Backend Foundation (IN PROGRESS)
+`T3.1.1` ✅, `T3.1.2` 🔜, `T2.2.1` 🔜
 
 ---
 
@@ -130,6 +133,14 @@ src/
 │   │   └── templates/spirit_card.html ← Jinja2 卡片模板
 │   └── assets/
 │       └── inline_tokens.py    ← 设计 Token (roco_adventure_journal)
+├── agent_backend/              ← agent-backend-system 实现
+│   ├── api/
+│   │   └── routes_openai.py    ← /v1/models + /healthz + /readyz
+│   ├── app/
+│   │   └── model_catalog.py    ← 受控虚拟模型目录
+│   ├── runtime/                ← Agent SDK 运行时 (待实现)
+│   ├── integrations/           ← 跨系统客户端 (待实现)
+│   └── main.py                 ← FastAPI 应用入口
 
 .anws/
 ├── changelog/              (升级记录)

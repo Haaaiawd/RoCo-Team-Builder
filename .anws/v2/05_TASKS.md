@@ -197,7 +197,7 @@ graph TD
 
 ### Phase 1: Foundation (基础设施)
 
-- [ ] **T3.1.1** [REQ-001]: 建立 OpenAI 兼容路由、模型目录与健康检查
+- [x] **T3.1.1** [REQ-001]: 建立 OpenAI 兼容路由、模型目录与健康检查
   - **描述**: 搭建 FastAPI 服务入口、`/v1/models`、`/healthz`、`/readyz` 和受控 `Model Catalog`，作为 web-ui 的内置轨道端点
   - **输入**: `01_PRD.md` §3 Goals G1/G5/G9；`02_ARCHITECTURE_OVERVIEW.md` §2 System 2、§3.6 `Model Catalog`；`03_ADR/ADR_001_TECH_STACK.md`；`04_SYSTEM_DESIGN/agent-backend-system.md` §4.2 Core Components、§5.1 `list_models(catalog)`、§5.3 HTTP API 端点摘要
   - **输出**: `src/agent-backend/main.py`、`src/agent-backend/api/routes_openai.py`、`src/agent-backend/app/model_catalog.py`
