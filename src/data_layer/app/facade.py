@@ -10,17 +10,28 @@ agent-backend-system 的唯一数据层入口。
 
 from __future__ import annotations
 
-from .contracts import (
-    IDataLayerFacade,
-)
+from dataclasses import asdict
+
+from .contracts import IDataLayerFacade
+from ..static.type_chart import TypeMatchupStore
+from ..static.mechanism_knowledge import StaticKnowledgeStore
 
 
 class DataLayerFacade:
-    """数据层 Facade — 骨架实现，待后续任务逐步填充。
+    """数据层 Facade — 逐步填充实现。
 
-    当前仅建立模块结构与导入路径，确保 agent-backend-system
-    可以按协议导入 IDataLayerFacade 并获取该实现类。
+    当前已接通:
+    - T1.2.2: get_type_matchup / get_static_knowledge (静态知识)
     """
+
+    def __init__(
+        self,
+        *,
+        type_matchup_store: TypeMatchupStore | None = None,
+        knowledge_store: StaticKnowledgeStore | None = None,
+    ) -> None:
+        self._type_matchup_store = type_matchup_store or TypeMatchupStore()
+        self._knowledge_store = knowledge_store or StaticKnowledgeStore()
 
     async def resolve_spirit_name(self, query: str) -> dict:
         raise NotImplementedError("T1.1.2 will implement")
@@ -32,10 +43,14 @@ class DataLayerFacade:
         raise NotImplementedError("T1.1.2 will implement")
 
     async def get_type_matchup(self, type_combo: list[str]) -> dict:
-        raise NotImplementedError("T1.2.2 will implement")
+        """属性克制计算 — 纯本地，不依赖网络。"""
+        result = self._type_matchup_store.get_type_matchup(type_combo)
+        return asdict(result)
 
     async def get_static_knowledge(self, topic_key: str) -> dict:
-        raise NotImplementedError("T1.2.2 will implement")
+        """静态机制知识读取 — 纯本地，不依赖网络。"""
+        entry = self._knowledge_store.get_static_knowledge(topic_key)
+        return asdict(entry)
 
     async def build_wiki_link(self, spirit_name: str) -> str:
         raise NotImplementedError("T1.2.1 will implement")

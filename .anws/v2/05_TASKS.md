@@ -123,7 +123,7 @@ graph TD
   - **依赖**: T1.1.1, T1.1.2
   - **优先级**: P0
 
-- [ ] **T1.2.2** [REQ-003]: 实现属性克制矩阵与静态知识 facade
+- [x] **T1.2.2** [REQ-003]: 实现属性克制矩阵与静态知识 facade
   - **描述**: 提供属性克制结果与核心机制静态知识读取，供配队推理和技能调优使用
   - **输入**: `01_PRD.md` US-003；`02_ARCHITECTURE_OVERVIEW.md` §2 System 3 职责、§3.6 共享术语；`04_SYSTEM_DESIGN/data-layer-system.md` §5.1 `get_type_matchup(type_combo)` / `get_static_knowledge(topic_key)`、§6.1 `TypeMatchupResult` / `StaticKnowledgeEntry`；T1.2.1 产出的 facade/cache 结构
   - **输出**: `src/data-layer/static/type_chart.py`、`src/data-layer/static/mechanism_knowledge.py`、`src/data-layer/static/data/*`
