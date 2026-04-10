@@ -215,7 +215,7 @@ graph TD
   - **依赖**: 无
   - **优先级**: P0
 
-- [ ] **T3.1.2** [REQ-005]: 实现会话键解析、内存会话仓库与闲置清理
+- [x] **T3.1.2** [REQ-005]: 实现会话键解析、内存会话仓库与闲置清理
   - **描述**: 根据 `user_id:chat_id` 组合键实现内存 Session、锁和 30 分钟闲置清理，严格拒绝缺失头部的请求
   - **输入**: `01_PRD.md` US-005；`03_ADR/ADR_003_SESSION_MANAGEMENT.md`；`02_ARCHITECTURE_OVERVIEW.md` §3.5 `SESSION_`、§3.6 `Builtin Quota` / 会话术语；`04_SYSTEM_DESIGN/agent-backend-system.md` §5.1 `resolve_session_key(headers, body)` / `evict_idle_sessions(registry, now)`、§11 测试策略；T3.1.1 产出的 FastAPI/app 骨架
   - **输出**: `src/agent-backend/app/session_service.py`、`src/agent-backend/app/request_context.py`
