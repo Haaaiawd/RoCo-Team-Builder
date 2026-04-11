@@ -238,7 +238,7 @@ graph TD
 
 ### Phase 2: Core (核心功能)
 
-- [ ] **T3.2.1** [REQ-002]: 实现请求归一化、多模态保留与错误映射
+- [x] **T3.2.1** [REQ-002]: 实现请求归一化、多模态保留与错误映射
   - **描述**: 将 OpenAI Chat Completions 请求归一化为标准上下文，保留图片 part，并统一输出 OpenAI 风格错误对象
   - **输入**: `01_PRD.md` US-002；`02_ARCHITECTURE_OVERVIEW.md` §3.5 错误矩阵、§3.6 `Model Catalog`；`04_SYSTEM_DESIGN/agent-backend-system.md` §5.1 `normalize_chat_request(payload, headers, catalog)`、§9 安全性考虑；T3.1.1 产出的 model catalog、API 路由
   - **输出**: `src/agent-backend/api/schemas_openai.py`、`src/agent-backend/api/error_mapping.py`、`src/agent-backend/app/request_normalizer.py`

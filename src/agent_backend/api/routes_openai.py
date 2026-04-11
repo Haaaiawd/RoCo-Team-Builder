@@ -10,9 +10,12 @@ OpenAI 兼容路由 — /v1/models, /healthz, /readyz
 
 from __future__ import annotations
 
+import time
 from fastapi import APIRouter, Request
 from fastapi.responses import JSONResponse
 
+from .error_mapping import ProductError, validation_error
+from ..app.request_normalizer import normalize_chat_request
 from ..app.model_catalog import ModelCatalog
 
 router = APIRouter()
@@ -56,16 +59,37 @@ async def list_models():
 @router.post("/v1/chat/completions")
 async def chat_completions(request: Request):
     """Chat Completions 端点 — 骨架占位，T3.2.1 接入完整归一化与 runtime。"""
-    return JSONResponse(
-        status_code=501,
-        content={
-            "error": {
-                "message": "Chat completions not yet implemented (T3.2.1)",
-                "type": "not_implemented",
-                "code": "not_implemented",
+    try:
+        payload = await request.json()
+    except Exception:
+        return validation_error("请求体必须是合法 JSON", param="body").to_response()
+
+    try:
+        context = normalize_chat_request(payload, dict(request.headers), _get_catalog())
+    except ProductError as exc:
+        return exc.to_response()
+
+    return {
+        "id": f"chatcmpl_{context.request_id}",
+        "object": "chat.completion",
+        "created": int(time.time()),
+        "model": context.model_entry.public_model_id,
+        "choices": [
+            {
+                "index": 0,
+                "message": {
+                    "role": "assistant",
+                    "content": "Request normalized successfully. Runtime not yet connected.",
+                },
+                "finish_reason": "stop",
             }
+        ],
+        "usage": {
+            "prompt_tokens": 0,
+            "completion_tokens": 0,
+            "total_tokens": 0,
         },
-    )
+    }
 
 
 # ---------------------------------------------------------------------------

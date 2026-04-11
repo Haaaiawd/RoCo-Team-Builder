@@ -101,20 +101,92 @@ class TestReadinessCheck:
 
 
 # ---------------------------------------------------------------------------
-# POST /v1/chat/completions — 骨架返回 501
+# POST /v1/chat/completions — T3.2.1 请求归一化
 # ---------------------------------------------------------------------------
 
 
-class TestChatCompletionsSkeleton:
+class TestChatCompletionsNormalization:
     @pytest.mark.asyncio
-    async def test_returns_not_implemented(self, client: AsyncClient):
-        """T3.2.1 实现前返回 501。"""
+    async def test_returns_minimal_success_response(self, client: AsyncClient):
+        resp = await client.post(
+            "/v1/chat/completions",
+            headers={
+                "X-OpenWebUI-User-Id": "user-1",
+                "X-OpenWebUI-Chat-Id": "chat-1",
+            },
+            json={"model": "roco-agent", "messages": [{"role": "user", "content": "hello"}]},
+        )
+        assert resp.status_code == 200
+        body = resp.json()
+        assert body["object"] == "chat.completion"
+        assert body["model"] == "roco-agent"
+        assert body["choices"][0]["message"]["role"] == "assistant"
+
+    @pytest.mark.asyncio
+    async def test_missing_headers_returns_session_error(self, client: AsyncClient):
         resp = await client.post(
             "/v1/chat/completions",
             json={"model": "roco-agent", "messages": [{"role": "user", "content": "hello"}]},
         )
-        assert resp.status_code == 501
-        assert "not_implemented" in resp.json()["error"]["type"]
+        assert resp.status_code == 400
+        error = resp.json()["error"]
+        assert error["code"] == "SESSION_MISSING_IDENTITY"
+        assert error["type"] == "invalid_request_error"
+
+    @pytest.mark.asyncio
+    async def test_unknown_model_returns_model_error(self, client: AsyncClient):
+        resp = await client.post(
+            "/v1/chat/completions",
+            headers={
+                "X-OpenWebUI-User-Id": "user-1",
+                "X-OpenWebUI-Chat-Id": "chat-1",
+            },
+            json={"model": "missing-model", "messages": [{"role": "user", "content": "hello"}]},
+        )
+        assert resp.status_code == 404
+        assert resp.json()["error"]["code"] == "MODEL_NOT_FOUND"
+
+    @pytest.mark.asyncio
+    async def test_non_vision_model_with_image_returns_capability_error(self, client: AsyncClient):
+        from agent_backend.api.routes_openai import init_router
+
+        init_router(
+            ModelCatalog(
+                entries=[
+                    ModelCatalogEntry(
+                        public_model_id="text-only",
+                        provider_model_name="provider/text-only",
+                        provider_base_url="http://localhost",
+                        supports_vision=False,
+                        enabled=True,
+                    )
+                ]
+            )
+        )
+
+        resp = await client.post(
+            "/v1/chat/completions",
+            headers={
+                "X-OpenWebUI-User-Id": "user-1",
+                "X-OpenWebUI-Chat-Id": "chat-1",
+            },
+            json={
+                "model": "text-only",
+                "messages": [
+                    {
+                        "role": "user",
+                        "content": [
+                            {"type": "text", "text": "看看这只精灵"},
+                            {"type": "image_url", "image_url": {"url": "https://example.com/a.png"}},
+                        ],
+                    }
+                ],
+            },
+        )
+        assert resp.status_code == 400
+        error = resp.json()["error"]
+        assert error["code"] == "CAPABILITY_VISION_UNSUPPORTED"
+        assert error["metadata"]["retryable"] is True
 
 
 # ---------------------------------------------------------------------------
