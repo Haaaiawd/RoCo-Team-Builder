@@ -38,6 +38,11 @@ class NameResolver:
     def __init__(self, alias_index: AliasIndex) -> None:
         self._alias_index = alias_index
 
+    @property
+    def canonical_names(self) -> list[str]:
+        """所有已注册的规范名列表 — 供搜索等场景使用。"""
+        return self._alias_index.canonical_names
+
     def resolve(self, query: str) -> dict:
         """解析精灵名称。
 

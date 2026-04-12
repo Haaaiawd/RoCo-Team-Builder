@@ -78,7 +78,7 @@
 - **最新架构版本**: `.anws/v2`
 - **活动任务清单**: `.anws/v2/05_TASKS.md`
 - **待办任务数**: `15`（Level 3: 11, INT: 4）
-- **最近一次更新**: `2026-04-11 — /forge Wave 4: T3.2.1 请求归一化与错误映射完成，43+14 测试通过`
+- **最近一次更新**: `2026-04-12 — T3.3.2 SSE 流式输出完成: stream_bridge + 并发隔离验证，12 新集成测试，全量 206 passed`
 
 ### ✅ Wave 1 — Data Spine 基础脊柱 (COMPLETED)
 `T1.1.1` ✅, `T1.1.2` ✅, `T1.2.1` ✅
@@ -86,8 +86,14 @@
 ### ✅ Wave 2 — Static Knowledge + Card Skeleton (COMPLETED)
 `T1.2.2` ✅, `T2.1.1` ✅
 
-### 🌊 Wave 3 — Agent Backend Foundation (IN PROGRESS)
-`T3.1.1` ✅, `T3.1.2` ✅, `T2.2.1` ✅, `T3.2.1` ✅
+### 🌊 Wave 3 — Agent Backend Foundation (COMPLETED)
+`T3.1.1` ✅, `T3.1.2` ✅, `T2.2.1` ✅, `T3.2.1` ✅, `T3.2.2` ✅, `T3.2.3` ✅, `T3.2.4` ✅
+
+### 🔧 Phase 3 Integration (COMPLETED)
+`T3.3.1` ✅, `T3.3.2` ✅
+
+### 🔧 Data-Layer Facade 接线修复 (COMPLETED)
+`DataLayerFacade` 4 个 NotImplementedError 接通 + `search_spirits` 新实现 + `NameResolver.canonical_names` 属性
 
 ---
 

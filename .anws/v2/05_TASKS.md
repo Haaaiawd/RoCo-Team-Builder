@@ -256,7 +256,7 @@ graph TD
   - **依赖**: T3.1.1
   - **优先级**: P0
 
-- [ ] **T3.2.2** [REQ-004]: 接入资料查询工具与精灵卡片工具结果
+- [x] **T3.2.2** [REQ-004]: 接入资料查询工具与精灵卡片工具结果
   - **描述**: 在 Agent runtime 中接入 `get_spirit_profile` / `search_spirits` / `render_spirit_card` 工具，使单精灵资料查询能返回卡片或文本降级
   - **输入**: `01_PRD.md` US-004；`02_ARCHITECTURE_OVERVIEW.md` §2 System 2/3/4、§3.5 `WIKI_TIMEOUT_` / `CARD_RENDER_`；`04_SYSTEM_DESIGN/agent-backend-system.md` §5.2 `IDataLayerClient` / `ISpiritCardClient`、§8.2；T1.2.1 产出的 `SpiritProfile` facade、T2.2.1 产出的 `RenderedSpiritCard` 渲染器
   - **输出**: `src/agent-backend/runtime/tool_registry.py`、`src/agent-backend/integrations/data_layer_client.py`、`src/agent-backend/integrations/spirit_card_client.py`
@@ -277,7 +277,7 @@ graph TD
   - **依赖**: T1.2.1, T2.2.1
   - **优先级**: P1
 
-- [ ] **T3.2.3** [REQ-001]: 实现配队推理与技能调优工具链
+- [x] **T3.2.3** [REQ-001]: 实现配队推理与技能调优工具链
   - **描述**: 实现围绕核心精灵配队、已有 6 只技能调优、缺失精灵追问与补位分析的 Agent 工具链
   - **输入**: `01_PRD.md` US-001、US-003、US-005；`02_ARCHITECTURE_OVERVIEW.md` §2 System 2 职责；`04_SYSTEM_DESIGN/agent-backend-system.md` §4.2 `Tool Registry`、§5.1 `run_agent_turn(context, session_items)`；`04_SYSTEM_DESIGN/data-layer-system.md` §5.1 `resolve_spirit_name` / `get_spirit_profile` / `get_type_matchup` / `get_static_knowledge`；T1.2.1、T1.2.2、T3.1.2 产出的数据 facade 与会话仓库
   - **输出**: `src/agent-backend/runtime/agent_factory.py`、`src/agent-backend/runtime/prompting.py`、`src/agent-backend/runtime/team_builder_tools.py`
@@ -298,7 +298,7 @@ graph TD
   - **依赖**: T1.2.1, T1.2.2, T3.1.2
   - **优先级**: P0
 
-- [ ] **T3.2.4** [REQ-002]: 实现截图识别确认流与 owned_spirits 会话约束
+- [x] **T3.2.4** [REQ-002]: 实现截图识别确认流与 owned_spirits 会话约束
   - **描述**: 在 Agent 收到图片后，先将多模态 LLM 识别出的精灵名称列表结构化为 `RecognitionResult`，以工具调用结果形式回传给前端展示并等待用户确认；用户确认后，将 `owned_spirits` 列表持久化到当前会话上下文；后续推理工具链在 `owned_spirits` 非空时，仅从该列表内推荐精灵，若确需列表外精灵，须先向用户询问
   - **输入**: `01_PRD.md` US-002 AC-1（识别清单确认）、AC-3（推荐不超出列表）；`02_ARCHITECTURE_OVERVIEW.md` §3.5 错误矩阵；`04_SYSTEM_DESIGN/agent-backend-system.md` §4.2 `Tool Registry`、§5.1 `run_agent_turn`、§6 数据模型；`03_ADR/ADR_003_SESSION_MANAGEMENT.md`（会话边界不新增并行状态源）；T3.1.2 产出的会话仓库、T3.2.1 产出的请求归一化器、T3.2.3 产出的配队工具链
   - **输出**: `src/agent-backend/runtime/recognition_tool.py`（`recognize_spirit_list` 工具，输出 `RecognitionResult`）、`src/agent-backend/app/session_extensions.py`（为 `SessionItem` 扩展 `owned_spirits: list[str]` 字段）、`src/agent-backend/runtime/team_builder_tools.py`（在配队工具链入口处读取 `owned_spirits` 并约束候选池）
@@ -324,7 +324,7 @@ graph TD
 
 ### Phase 3: Integration (集成)
 
-- [ ] **T3.3.1** [REQ-002]: 实现 builtin 配额守卫与视觉能力后端兜底
+- [x] **T3.3.1** [REQ-002]: 实现 builtin 配额守卫与视觉能力后端兜底
   - **描述**: 实现 builtin route 的最小额度模型，以及基于 `supports_vision` 的后端最终能力兜底，明确区分 `QUOTA_`、`CAPABILITY_` 与 `RATE_LIMIT_`
   - **输入**: `01_PRD.md` §6.2 双轨能力矩阵、§8 DoD（`QUOTA_` / `CAPABILITY_` 闭合）；`02_ARCHITECTURE_OVERVIEW.md` §3.5 错误矩阵、§3.6 `Builtin Quota` / `Model Catalog`；`04_SYSTEM_DESIGN/agent-backend-system.md` §5.1 `enforce_builtin_quota(context, quota_state)`、§6.1 `BuiltinQuotaPolicy` / `BuiltinQuotaState` / `QuotaDecision`、§9 安全性考虑；T3.1.1、T3.2.1 产出的 model catalog 与 normalizer
   - **输出**: `src/agent-backend/app/quota_guard.py`、`src/agent-backend/app/capability_guard.py`
@@ -345,7 +345,7 @@ graph TD
   - **依赖**: T3.2.1
   - **优先级**: P0
 
-- [ ] **T3.3.2** [REQ-005]: 打通 SSE 流式输出、兼容层契约与 10 并发隔离验证
+- [x] **T3.3.2** [REQ-005]: 打通 SSE 流式输出、兼容层契约与 10 并发隔离验证
   - **描述**: 完成 runtime events 到 OpenAI SSE chunk 的桥接，并验证流式输出、跨会话并发和 mid-stream error 行为
   - **输入**: `01_PRD.md` §7 成功指标（会话隔离正确率 100%）、§8 DoD（≥10 并发会话隔离）；`04_SYSTEM_DESIGN/agent-backend-system.md` §5.1 `stream_runtime_events(events, model_id)`、§11.2/11.3/11.4；T3.1.2、T3.2.2、T3.2.3、T3.3.1 产出的 session/runtime/quota 能力
   - **输出**: `src/agent-backend/app/stream_bridge.py`、`tests/integration/agent_backend_streaming_test.py`
