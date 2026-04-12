@@ -390,7 +390,7 @@ graph TD
   - **依赖**: 无
   - **优先级**: P0
 
-- [ ] **T4.1.2** [REQ-006]: 接入内置轨道与 BYOK 双轨设置
+- [x] **T4.1.2** [REQ-006]: 接入内置轨道与 BYOK 双轨设置
   - **描述**: 实现内置连接注册、BYOK 本地保存、轨道状态显示与不可静默切轨规则
   - **输入**: `01_PRD.md` §6.2 双轨能力矩阵；`02_ARCHITECTURE_OVERVIEW.md` §1 系统上下文、§2 System 1 职责；`04_SYSTEM_DESIGN/web-ui-system.md` §5.1 `select_route` / `persist_direct_connection` / `register_builtin_connection`、§6.1 `BuiltinRouteConfig` / `DirectConnectionEntry` / `UiRouteState`；T4.1.1 产出的 policy/shell 骨架、T3.1.1 产出的 `/v1/models`
   - **输出**: `src/web-ui-shell/settings/builtin-route/*`、`src/web-ui-shell/settings/byok/*`、`src/web-ui-shell/integrations/agent-backend-connection/*`
