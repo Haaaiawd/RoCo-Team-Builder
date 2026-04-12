@@ -478,7 +478,7 @@ graph TD
 
 ### Phase 3: Polish (优化)
 
-- [ ] **T4.3.1** [REQ-006]: 完成关键用户故事 E2E、白名单回归与发布前检查
+- [x] **T4.3.1** [REQ-006]: 完成关键用户故事 E2E、白名单回归与发布前检查
   - **描述**: 以产品视角验证文字配队、截图识别、资料卡片、BYOK 降级与白名单基线，形成发布前回归门槛
   - **输入**: `01_PRD.md` US-001~US-006、§8 DoD；`03_ADR/ADR_004_WEB_UI_PRUNING_STRATEGY.md` 中唯一验证资产约束；`04_SYSTEM_DESIGN/web-ui-system.md` §11.3/11.4、§12.2；T4.2.1、T4.2.2、T4.2.3 的前端产物
   - **输出**: `tests/e2e/product_shell.spec.ts`、`tests/e2e/visible_feature_policy.spec.ts`、发布前检查记录
