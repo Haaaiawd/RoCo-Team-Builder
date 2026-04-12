@@ -521,7 +521,7 @@ graph TD
   - **依赖**: T1.2.2
   - **优先级**: P0
 
-- [ ] **INT-S2** [MILESTONE]: S2 集成验证 — Card Surface
+- [x] **INT-S2** [MILESTONE]: S2 集成验证 — Card Surface
   - **描述**: 验证资料卡片退出标准，确认精灵资料可被渲染为 Rich UI 与文本降级双产物
   - **输入**: T2.1.1 产出的卡片骨架；T2.2.1 产出的模板/清洗/fallback；T1.2.1 产出的 `SpiritProfile`
   - **输出**: 卡片集成验证记录（通过/失败 + Bug 清单）
