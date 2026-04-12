@@ -503,7 +503,7 @@ graph TD
 
 ## 集成验证任务 (INT Tasks)
 
-- [ ] **INT-S1** [MILESTONE]: S1 集成验证 — Data Spine
+- [x] **INT-S1** [MILESTONE]: S1 集成验证 — Data Spine
   - **描述**: 验证数据层退出标准，确认名称解析、资料查询、缓存和静态知识已形成稳定数据脊柱
   - **输入**: T1.1.1 产出的 facade/contracts；T1.1.2 产出的名称解析器；T1.2.1 产出的 BWIKI 仓储/缓存；T1.2.2 产出的属性矩阵与静态知识
   - **输出**: 数据层集成验证记录（通过/失败 + Bug 清单）
