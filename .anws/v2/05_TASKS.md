@@ -587,7 +587,7 @@ graph TD
 
 ### Phase 1: Foundation (部署交付)
 
-- [ ] **T5.1.1** [DoD]: 产出 Docker Compose 部署文档并完成冷启动演练验收
+- [x] **T5.1.1** [DoD]: 产出 Docker Compose 部署文档并完成冷启动演练验收
   - **描述**: 编写面向首次部署者的完整运行说明，涵盖环境变量配置、服务启动顺序、健康检查与常见排错；以一次真实冷启动演练（从干净克隆到所有服务就绪）验证"< 10 分钟"承诺；不得引入 `02_ARCHITECTURE_OVERVIEW.md` 之外的额外基础设施
   - **输入**: `01_PRD.md` §8 DoD（"Docker Compose 部署文档完整，从克隆到运行 < 10 分钟"）；`02_ARCHITECTURE_OVERVIEW.md` §6 物理代码结构与部署拓扑；`03_ADR/ADR_001_TECH_STACK.md`（简单优先、Docker Compose 即可）；所有 S1-S4 产物（代码、镜像、env 示例）
   - **输出**: `README.md`（含快速启动章节，≤ 10 步）、`docker-compose.yml`（生产就绪配置）、`.env.example`（所有必填变量含注释）、冷启动演练记录（截图/日志，证明 < 10 分钟）

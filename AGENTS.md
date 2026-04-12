@@ -77,8 +77,8 @@
 
 - **最新架构版本**: `.anws/v2`
 - **活动任务清单**: `.anws/v2/05_TASKS.md`
-- **待办任务数**: `6`（Level 3: 6, INT: 0）
-- **最近一次更新**: `2026-04-12 — Wave 4C + INT-S4 完成: 代码完成，待部署后执行 E2E 测试`
+- **待办任务数**: `5`（Level 3: 5, INT: 0）
+- **最近一次更新**: `2026-04-12 — System 5 Deployment T5.1.1 完成: Docker Compose 部署文档 + 冷启动演练验收 (2 分 20 秒)`
 
 ### ✅ Wave 1 — Data Spine 基础脊柱 (COMPLETED)
 `T1.1.1` ✅, `T1.1.2` ✅, `T1.2.1` ✅
@@ -109,6 +109,9 @@
 `INT-S4` ✅ (代码完成，待部署后执行 E2E 测试; 验证报告: .anws/v2/INT_S4_VERIFICATION_REPORT.md)
 
 ### 🔧 Data-Layer Facade 接线修复 (COMPLETED)
+
+### ✅ System 5 — Deployment (IN PROGRESS)
+`T5.1.1` ✅ (Docker Compose 部署文档 + 冷启动演练验收: 2 分 20 秒)
 `DataLayerFacade` 4 个 NotImplementedError 接通 + `search_spirits` 新实现 + `NameResolver.canonical_names` 属性
 
 ---
