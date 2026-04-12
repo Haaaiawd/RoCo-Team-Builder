@@ -413,7 +413,7 @@ graph TD
 
 ### Phase 2: Core (核心功能)
 
-- [ ] **T4.2.1** [REQ-004]: 打通聊天时间线、工具折叠卡片与 Rich UI 宿主
+- [x] **T4.2.1** [REQ-004]: 打通聊天时间线、工具折叠卡片与 Rich UI 宿主
   - **描述**: 在聊天时间线中接入工具调用折叠展示和精灵卡片宿主，支持 Rich UI 与 fallback 文本双路径
   - **输入**: `01_PRD.md` §5.2 交互规范；`04_SYSTEM_DESIGN/web-ui-system.md` §5.1 `render_message_artifacts(message, policy)`、§10 性能考虑、§11 测试策略；T2.2.1 产出的 `RenderedSpiritCard`、T3.3.2 产出的 SSE/tool result 流
   - **输出**: `src/web-ui-shell/chat/timeline/*`、`src/web-ui-shell/chat/tool-result/*`、`src/web-ui-shell/integrations/rich-ui/*`
