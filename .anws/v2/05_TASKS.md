@@ -434,7 +434,7 @@ graph TD
   - **依赖**: T2.2.1, T3.3.2
   - **优先级**: P1
 
-- [ ] **T4.2.2** [REQ-006]: 实现白名单导航裁剪与复古手账主题覆写
+- [x] **T4.2.2** [REQ-006]: 实现白名单导航裁剪与复古手账主题覆写
   - **描述**: 移除或隐藏终端用户无关入口，并完成炭黑侧栏、羊皮纸主区、暖金高亮与撕纸边缘的主题覆写
   - **输入**: `01_PRD.md` US-006、§5.2 交互规范；`03_ADR/ADR_004_WEB_UI_PRUNING_STRATEGY.md`；`04_SYSTEM_DESIGN/web-ui-system.md` §5.1 `filter_navigation` / `build_theme_override_css`、§7.2 Visual Language、§11.3 UI 回归测试；T4.1.1 产出的 policy/snapshot 工具
   - **输出**: `src/web-ui-shell/navigation/*`、`src/web-ui-shell/branding/*`、`src/web-ui-shell/shell/theme-override.css`
