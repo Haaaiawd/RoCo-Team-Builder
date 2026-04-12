@@ -372,7 +372,7 @@ graph TD
 
 ### Phase 1: Foundation (基础设施)
 
-- [ ] **T4.1.1** [REQ-006]: 建立产品壳层骨架与 VisibleFeaturePolicy 真理源
+- [x] **T4.1.1** [REQ-006]: 建立产品壳层骨架与 VisibleFeaturePolicy 真理源
   - **描述**: 建立前端产品壳层、白名单策略定义与快照导出能力，固定终端用户可见入口范围
   - **输入**: `01_PRD.md` US-006、§8 DoD（`VisibleFeaturePolicy` 快照/基线）；`02_ARCHITECTURE_OVERVIEW.md` §2 System 1、§3.6 `VisibleFeaturePolicy`；`03_ADR/ADR_004_WEB_UI_PRUNING_STRATEGY.md`；`04_SYSTEM_DESIGN/web-ui-system.md` §4.2 Core Components、§6.1 `VisibleFeaturePolicy`、§11.3 UI 回归测试
   - **输出**: `src/web-ui-shell/guards/feature-whitelist/policy.ts`、`src/web-ui-shell/regression/visible-feature-snapshot.ts`、`src/web-ui-shell/shell/layout/*`

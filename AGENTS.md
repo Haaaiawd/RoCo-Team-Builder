@@ -77,8 +77,8 @@
 
 - **最新架构版本**: `.anws/v2`
 - **活动任务清单**: `.anws/v2/05_TASKS.md`
-- **待办任务数**: `12`（Level 3: 11, INT: 1）
-- **最近一次更新**: `2026-04-12 — Wave 4B 后端集成验证完成: INT-S1 (48 passed) + INT-S2 (62 passed)`
+- **待办任务数**: `11`（Level 3: 11, INT: 0）
+- **最近一次更新**: `2026-04-12 — Wave 4C Web UI 壳层基础完成: T4.1.1 (产品壳层骨架 + VisibleFeaturePolicy 真理源 + 复古冒险者手账风主题)`
 
 ### ✅ Wave 1 — Data Spine 基础脊柱 (COMPLETED)
 `T1.1.1` ✅, `T1.1.2` ✅, `T1.2.1` ✅
@@ -98,6 +98,9 @@
 ### ✅ Wave 4B — 后端集成验证 (COMPLETED)
 `INT-S1` ✅ (48 passed; 验证报告: .anws/v2/INT_S1_VERIFICATION_REPORT.md)
 `INT-S2` ✅ (62 passed; 验证报告: .anws/v2/INT_S2_VERIFICATION_REPORT.md)
+
+### ✅ Wave 4C — Web UI 壳层基础 (COMPLETED)
+`T4.1.1` ✅ (产品壳层骨架 + VisibleFeaturePolicy 真理源 + 复古冒险者手账风主题)
 
 ### 🔧 Data-Layer Facade 接线修复 (COMPLETED)
 `DataLayerFacade` 4 个 NotImplementedError 接通 + `search_spirits` 新实现 + `NameResolver.canonical_names` 属性
