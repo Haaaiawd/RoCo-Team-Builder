@@ -455,7 +455,7 @@ graph TD
   - **依赖**: T4.1.1
   - **优先级**: P0
 
-- [ ] **T4.2.3** [REQ-002]: 实现截图发送前能力预检与 builtin 配额提示
+- [x] **T4.2.3** [REQ-002]: 实现截图发送前能力预检与 builtin 配额提示
   - **描述**: 在前端发送前依据当前轨道与 `supports_vision` 做图片能力预检，并在 builtin 超额时显示 `QUOTA_` 语义引导
   - **输入**: `01_PRD.md` US-002、§6.2 双轨能力矩阵；`02_ARCHITECTURE_OVERVIEW.md` §3.5 `CAPABILITY_` / `QUOTA_`；`04_SYSTEM_DESIGN/web-ui-system.md` §5.1 `preflight_image_capability` / `submit_image_message`、§6.1 `UiRouteState`；T4.1.2 产出的 route state、T3.3.1 产出的 quota/capability 守卫
   - **输出**: `src/web-ui-shell/chat/attachments/*`、`src/web-ui-shell/guards/route-isolation/*`、`src/web-ui-shell/chat/composer/*`

@@ -77,8 +77,8 @@
 
 - **最新架构版本**: `.anws/v2`
 - **活动任务清单**: `.anws/v2/05_TASKS.md`
-- **待办任务数**: `8`（Level 3: 8, INT: 0）
-- **最近一次更新**: `2026-04-12 — Wave 4C Web UI 壳层基础完成: T4.2.2 (白名单导航裁剪与复古手账主题覆写)`
+- **待办任务数**: `7`（Level 3: 7, INT: 0）
+- **最近一次更新**: `2026-04-12 — Wave 4C Web UI 壳层基础完成: T4.2.3 (截图发送前能力预检与 builtin 配额提示)`
 
 ### ✅ Wave 1 — Data Spine 基础脊柱 (COMPLETED)
 `T1.1.1` ✅, `T1.1.2` ✅, `T1.2.1` ✅
@@ -104,6 +104,7 @@
 `T4.1.2` ✅ (接入内置轨道与 BYOK 双轨设置)
 `T4.2.1` ✅ (打通聊天时间线、工具折叠卡片与 Rich UI 宿主)
 `T4.2.2` ✅ (白名单导航裁剪与复古手账主题覆写)
+`T4.2.3` ✅ (截图发送前能力预检与 builtin 配额提示)
 
 ### 🔧 Data-Layer Facade 接线修复 (COMPLETED)
 `DataLayerFacade` 4 个 NotImplementedError 接通 + `search_spirits` 新实现 + `NameResolver.canonical_names` 属性
