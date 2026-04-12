@@ -1,0 +1,445 @@
+/**
+ * RoCo Retro Adventure Journal Theme Override
+ * 
+ * 复古冒险者手账风主题覆写 CSS
+ * 
+ * 参考：04_SYSTEM_DESIGN/web-ui-system.md §7.2 Visual Language & Theme Override Strategy
+ * 参考视觉：asserts/ui-style.png
+ */
+
+/* ============================================
+   CSS Variables - 手账风设计 Token
+   ============================================ */
+
+:root {
+	/* 主色结构 */
+	--roco-charcoal-sidebar: #1a1a1a;
+	--roco-charcoal-sidebar-light: #2a2a2a;
+	--roco-parchment-bg: #f5f0e6;
+	--roco-parchment-light: #faf8f3;
+	--roco-parchment-dark: #e8e0d0;
+	--roco-warm-gold: #d4a017;
+	--roco-warm-gold-light: #e8c055;
+	--roco-warm-gold-dark: #b8860b;
+	--roco-cream-surface: #fefdf8;
+	--roco-cream-surface-alt: #f9f7f2;
+	
+	/* 文本颜色 */
+	--roco-text-primary: #2c2416;
+	--roco-text-secondary: #5c4a32;
+	--roco-text-muted: #8b7355;
+	
+	/* 边框颜色 */
+	--roco-border-warm: #c4a882;
+	--roco-border-gold: #d4a017;
+	
+	/* 字体 */
+	--roco-font-family-primary: 'Crimson Pro', 'Georgia', serif;
+	--roco-font-family-ui: 'Lato', 'Helvetica Neue', sans-serif;
+	--roco-font-family-hand: 'Patrick Hand', cursive;
+	--roco-font-size-base: 16px;
+	--roco-font-size-sm: 14px;
+	--roco-font-size-lg: 18px;
+	--roco-font-size-xl: 24px;
+	--roco-line-height-tight: 1.3;
+	--roco-line-height-normal: 1.6;
+	--roco-line-height-relaxed: 1.8;
+	
+	/* 间距 */
+	--roco-spacing-xs: 4px;
+	--roco-spacing-sm: 8px;
+	--roco-spacing-md: 16px;
+	--roco-spacing-lg: 24px;
+	--roco-spacing-xl: 32px;
+	--roco-spacing-xxl: 48px;
+	
+	/* 圆角 */
+	--roco-border-radius-sm: 4px;
+	--roco-border-radius-md: 8px;
+	--roco-border-radius-lg: 12px;
+	--roco-border-radius-xl: 16px;
+	--roco-border-radius-pill: 9999px;
+	
+	/* 阴影 */
+	--roco-shadow-paper: 0 2px 4px rgba(44, 36, 22, 0.1), 0 1px 2px rgba(44, 36, 22, 0.06);
+	--roco-shadow-floating: 0 8px 16px rgba(44, 36, 22, 0.12), 0 4px 8px rgba(44, 36, 22, 0.08);
+	--roco-shadow-inset: inset 0 2px 4px rgba(44, 36, 22, 0.06);
+	
+	/* 动画 */
+	--roco-duration-fast: 150ms;
+	--roco-duration-normal: 300ms;
+	--roco-duration-slow: 500ms;
+	--roco-easing-ease: cubic-bezier(0.4, 0, 0.2, 1);
+	--roco-easing-bounce: cubic-bezier(0.68, -0.55, 0.265, 1.55);
+}
+
+/* ============================================
+   侧栏 - 炭黑背景 + 撕纸边缘
+   ============================================ */
+
+aside,
+.sidebar,
+[class*="sidebar"] {
+	background-color: var(--roco-charcoal-sidebar) !important;
+	border-right: none !important;
+	position: relative;
+}
+
+/* 撕纸边缘效果 */
+aside::before,
+.sidebar::before {
+	content: '';
+	position: absolute;
+	top: 0;
+	right: 0;
+	bottom: 0;
+	width: 12px;
+	background: linear-gradient(
+		to right,
+		transparent 0%,
+		rgba(26, 26, 26, 0.6) 20%,
+		rgba(26, 26, 26, 0.9) 50%,
+		rgba(26, 26, 26, 0.6) 80%,
+		transparent 100%
+	);
+	/* 撕纸边缘纹理 - 使用 CSS 渐变模拟 */
+	background-image: 
+		linear-gradient(135deg, transparent 25%, rgba(255,255,255,0.05) 25%, rgba(255,255,255,0.05) 50%, transparent 50%, transparent 75%, rgba(255,255,255,0.05) 75%),
+		linear-gradient(45deg, transparent 25%, rgba(255,255,255,0.05) 25%, rgba(255,255,255,0.05) 50%, transparent 50%, transparent 75%, rgba(255,255,255,0.05) 75%);
+	background-size: 8px 8px;
+	pointer-events: none;
+	z-index: 1;
+}
+
+/* 侧栏导航项 */
+.sidebar-item,
+[class*="sidebar-item"],
+[class*="nav-item"] {
+	background-color: transparent !important;
+	color: #e0e0e0 !important;
+	border: none !important;
+	border-radius: var(--roco-border-radius-sm) !important;
+	padding: var(--roco-spacing-sm) var(--roco-spacing-md) !important;
+	margin: var(--roco-spacing-xs) var(--roco-spacing-sm) !important;
+	font-family: var(--roco-font-family-ui) !important;
+	font-size: var(--roco-font-size-sm) !important;
+	transition: all var(--roco-duration-fast) var(--roco-easing-ease) !important;
+}
+
+.sidebar-item:hover,
+[class*="sidebar-item"]:hover,
+[class*="nav-item"]:hover {
+	background-color: var(--roco-charcoal-sidebar-light) !important;
+	color: var(--roco-warm-gold) !important;
+	transform: translateX(2px) !important;
+}
+
+.sidebar-item.active,
+[class*="sidebar-item"].active,
+[class*="nav-item"].active {
+	background-color: var(--roco-warm-gold) !important;
+	color: var(--roco-charcoal-sidebar) !important;
+	font-weight: 600 !important;
+}
+
+/* ============================================
+   主聊天区 - 羊皮纸背景 + 地图纹理
+   ============================================ */
+
+main,
+.chat-container,
+[class*="chat-container"],
+[class*="main-content"] {
+	background-color: var(--roco-parchment-bg) !important;
+	color: var(--roco-text-primary) !important;
+	font-family: var(--roco-font-family-primary) !important;
+	line-height: var(--roco-line-height-relaxed) !important;
+	position: relative;
+}
+
+/* 地图纹理效果 - 使用 CSS 渐变模拟 */
+main::before,
+.chat-container::before {
+	content: '';
+	position: absolute;
+	top: 0;
+	left: 0;
+	right: 0;
+	bottom: 0;
+	background-image: 
+		linear-gradient(var(--roco-parchment-dark) 1px, transparent 1px),
+		linear-gradient(90deg, var(--roco-parchment-dark) 1px, transparent 1px);
+	background-size: 100px 100px;
+	background-position: center center;
+	opacity: 0.08;
+	mix-blend-mode: multiply;
+	pointer-events: none;
+	z-index: 0;
+}
+
+/* ============================================
+   消息气泡 - 纸贴片效果
+   ============================================ */
+
+.message-bubble.user,
+[class*="message"][class*="user"],
+[class*="user-message"] {
+	background-color: var(--roco-cream-surface) !important;
+	border-radius: var(--roco-border-radius-md) var(--roco-border-radius-lg) 
+	               var(--roco-border-radius-lg) var(--roco-border-radius-sm) !important;
+	box-shadow: var(--roco-shadow-paper) !important;
+	border: 1px solid var(--roco-border-warm) !important;
+	transform: rotate(-1deg) !important;
+	transition: all var(--roco-duration-fast) var(--roco-easing-ease) !important;
+	position: relative;
+	z-index: 1;
+}
+
+.message-bubble.user:hover,
+[class*="message"][class*="user"]:hover,
+[class*="user-message"]:hover {
+	transform: rotate(0deg) translateY(-2px) !important;
+	box-shadow: var(--roco-shadow-floating) !important;
+	border-color: var(--roco-border-gold) !important;
+}
+
+/* Agent 消息 - 手写风格 */
+.message-bubble.assistant,
+[class*="message"][class*="assistant"],
+[class*="assistant-message"] {
+	background-color: transparent !important;
+	color: var(--roco-text-primary) !important;
+	font-family: var(--roco-font-family-primary) !important;
+	line-height: var(--roco-line-height-relaxed) !important;
+	border: none !important;
+	box-shadow: none !important;
+	padding: var(--roco-spacing-md) !important;
+}
+
+/* ============================================
+   输入区 - 胶囊形工具条
+   ============================================ */
+
+form,
+.input-container,
+[class*="input-container"],
+[class*="chat-input"] {
+	background-color: var(--roco-cream-surface-alt) !important;
+	border-radius: var(--roco-border-radius-pill) !important;
+	border: 2px solid var(--roco-border-warm) !important;
+	box-shadow: var(--roco-shadow-paper) !important;
+	padding: var(--roco-spacing-sm) var(--roco-spacing-md) !important;
+	transition: all var(--roco-duration-fast) var(--roco-easing-ease) !important;
+}
+
+form:focus-within,
+.input-container:focus-within,
+[class*="input-container"]:focus-within,
+[class*="chat-input"]:focus-within {
+	border-color: var(--roco-border-gold) !important;
+	box-shadow: var(--roco-shadow-floating) !important;
+}
+
+textarea,
+input[type="text"],
+[class*="textarea"],
+[class*="input-field"] {
+	background-color: transparent !important;
+	border: none !important;
+	font-family: var(--roco-font-family-ui) !important;
+	font-size: var(--roco-font-size-base) !important;
+	color: var(--roco-text-primary) !important;
+	resize: none !important;
+	outline: none !important;
+}
+
+textarea::placeholder,
+input[type="text"]::placeholder,
+[class*="textarea"]::placeholder,
+[class*="input-field"]::placeholder {
+	color: var(--roco-text-muted) !important;
+	font-style: italic !important;
+}
+
+/* ============================================
+   History 项 - 手账标签风格
+   ============================================ */
+
+.history-item,
+[class*="history-item"],
+[class*="chat-history-item"] {
+	background-color: var(--roco-parchment-light) !important;
+	border: 1px solid var(--roco-border-warm) !important;
+	border-radius: var(--roco-border-radius-sm) !important;
+	padding: var(--roco-spacing-sm) var(--roco-spacing-md) !important;
+	margin-bottom: var(--roco-spacing-sm) !important;
+	font-family: var(--roco-font-family-ui) !important;
+	font-size: var(--roco-font-size-sm) !important;
+	color: var(--roco-text-secondary) !important;
+	transition: all var(--roco-duration-fast) var(--roco-easing-ease) !important;
+	cursor: pointer !important;
+}
+
+.history-item:hover,
+[class*="history-item"]:hover,
+[class*="chat-history-item"]:hover {
+	background-color: var(--roco-warm-gold) !important;
+	color: var(--roco-text-primary) !important;
+	border-color: var(--roco-border-gold) !important;
+	transform: translateX(4px) !important;
+	box-shadow: var(--roco-shadow-paper) !important;
+}
+
+.history-item.active,
+[class*="history-item"].active,
+[class*="chat-history-item"].active {
+	background-color: var(--roco-warm-gold) !important;
+	border-color: var(--roco-border-gold) !important;
+	border-style: dashed !important;
+	font-weight: 600 !important;
+}
+
+/* ============================================
+   按钮 - 手账标签感
+   ============================================ */
+
+button,
+[class*="button"],
+[class*="btn"] {
+	background-color: var(--roco-warm-gold) !important;
+	color: var(--roco-text-primary) !important;
+	border: 1px solid var(--roco-border-gold) !important;
+	border-radius: var(--roco-border-radius-md) !important;
+	font-family: var(--roco-font-family-ui) !important;
+	font-weight: 600 !important;
+	padding: var(--roco-spacing-sm) var(--roco-spacing-lg) !important;
+	transition: all var(--roco-duration-fast) var(--roco-easing-ease) !important;
+	cursor: pointer !important;
+}
+
+button:hover,
+[class*="button"]:hover,
+[class*="btn"]:hover {
+	background-color: var(--roco-warm-gold-light) !important;
+	transform: translateY(-1px) !important;
+	box-shadow: var(--roco-shadow-paper) !important;
+}
+
+button:active,
+[class*="button"]:active,
+[class*="btn"]:active {
+	transform: translateY(0) !important;
+}
+
+/* ============================================
+   工具卡片 - 手账标签风格
+   ============================================ */
+
+.tool-card,
+[class*="tool-card"],
+.roco-tool-card {
+	background-color: var(--roco-cream-surface) !important;
+	border: 1px solid var(--roco-border-warm) !important;
+	border-radius: var(--roco-border-radius-md) !important;
+	padding: var(--roco-spacing-md) !important;
+	margin: var(--roco-spacing-md) 0 !important;
+	box-shadow: var(--roco-shadow-paper) !important;
+	transition: all var(--roco-duration-fast) var(--roco-easing-ease) !important;
+}
+
+.tool-card:hover,
+[class*="tool-card"]:hover,
+.roco-tool-card:hover {
+	border-color: var(--roco-border-gold) !important;
+	transform: translateY(-1px) !important;
+	box-shadow: var(--roco-shadow-floating) !important;
+}
+
+/* ============================================
+   Rich UI 宿主 - iframe 沙箱
+   ============================================ */
+
+iframe,
+.rich-ui-host,
+[class*="rich-ui-host"] {
+	border: 1px solid var(--roco-border-warm) !important;
+	border-radius: var(--roco-border-radius-md) !important;
+	background-color: var(--roco-cream-surface) !important;
+}
+
+/* ============================================
+   模型选择器
+   ============================================ */
+
+.model-selector,
+[class*="model-selector"],
+[class*="model-select"] {
+	background-color: var(--roco-cream-surface) !important;
+	border: 1px solid var(--roco-border-warm) !important;
+	border-radius: var(--roco-border-radius-md) !important;
+	color: var(--roco-text-primary) !important;
+	font-family: var(--roco-font-family-ui) !important;
+	transition: all var(--roco-duration-fast) var(--roco-easing-ease) !important;
+}
+
+.model-selector:hover,
+[class*="model-selector"]:hover,
+[class*="model-select"]:hover {
+	border-color: var(--roco-border-gold) !important;
+}
+
+/* ============================================
+   设置面板
+   ============================================ */
+
+.settings-panel,
+[class*="settings-panel"],
+[class*="settings"] {
+	background-color: var(--roco-parchment-light) !important;
+	border: 1px solid var(--roco-border-warm) !important;
+	border-radius: var(--roco-border-radius-lg) !important;
+}
+
+/* ============================================
+   禁止入口 - 隐藏
+   ============================================ */
+
+/* Notes, Channels, Knowledge, Admin, Open Terminal 等无关入口 */
+[class*="notes"],
+[class*="channels"],
+[class*="knowledge"],
+[class*="admin-panel"],
+[class*="terminal"],
+[class*="workspace"],
+[class*="prompt"],
+[class*="document"] {
+	display: none !important;
+}
+
+/* ============================================
+   滚动条样式
+   ============================================ */
+
+::-webkit-scrollbar {
+	width: 8px;
+	height: 8px;
+}
+
+::-webkit-scrollbar-track {
+	background: var(--roco-parchment-bg);
+}
+
+::-webkit-scrollbar-thumb {
+	background: var(--roco-border-warm);
+	border-radius: var(--roco-border-radius-pill);
+}
+
+::-webkit-scrollbar-thumb:hover {
+	background: var(--roco-border-gold);
+}
+
+/* ============================================
+   字体加载（通过 @import 或 link 标签）
+   ============================================ */
+
+/* 字体将通过外部资源加载，此处仅定义变量 */
