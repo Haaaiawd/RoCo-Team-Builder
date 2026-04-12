@@ -77,8 +77,8 @@
 
 - **最新架构版本**: `.anws/v2`
 - **活动任务清单**: `.anws/v2/05_TASKS.md`
-- **待办任务数**: `15`（Level 3: 11, INT: 4）
-- **最近一次更新**: `2026-04-12 — T3.3.2 SSE 流式输出完成: stream_bridge + 并发隔离验证，12 新集成测试，全量 206 passed`
+- **待办任务数**: `12`（Level 3: 11, INT: 1）
+- **最近一次更新**: `2026-04-12 — Wave 4B 后端集成验证完成: INT-S1 (48 passed) + INT-S2 (62 passed)`
 
 ### ✅ Wave 1 — Data Spine 基础脊柱 (COMPLETED)
 `T1.1.1` ✅, `T1.1.2` ✅, `T1.2.1` ✅
@@ -91,6 +91,13 @@
 
 ### 🔧 Phase 3 Integration (COMPLETED)
 `T3.3.1` ✅, `T3.3.2` ✅
+
+### ✅ Wave 4A — S3 集成验证 (COMPLETED)
+`INT-S3` ✅ (206 passed, 4 skipped; 验证报告: .anws/v2/INT_S3_VERIFICATION_REPORT.md)
+
+### ✅ Wave 4B — 后端集成验证 (COMPLETED)
+`INT-S1` ✅ (48 passed; 验证报告: .anws/v2/INT_S1_VERIFICATION_REPORT.md)
+`INT-S2` ✅ (62 passed; 验证报告: .anws/v2/INT_S2_VERIFICATION_REPORT.md)
 
 ### 🔧 Data-Layer Facade 接线修复 (COMPLETED)
 `DataLayerFacade` 4 个 NotImplementedError 接通 + `search_spirits` 新实现 + `NameResolver.canonical_names` 属性
