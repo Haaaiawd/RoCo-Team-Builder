@@ -12,7 +12,7 @@ from __future__ import annotations
 
 from dataclasses import asdict
 
-from .contracts import IDataLayerFacade, SearchCandidate
+from .contracts import IDataLayerFacade
 from .errors import AmbiguousSpiritNameError, SpiritNotFoundError
 from ..cache.key_builder import build_cache_key
 from ..cache.registry import CacheRegistry

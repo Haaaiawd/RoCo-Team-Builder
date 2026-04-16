@@ -77,8 +77,8 @@
 
 - **最新架构版本**: `.anws/v2`
 - **活动任务清单**: `.anws/v2/05_TASKS.md`
-- **待办任务数**: `5`（Level 3: 5, INT: 0）
-- **最近一次更新**: `2026-04-12 — System 5 Deployment T5.1.1 完成: Docker Compose 部署文档 + 冷启动演练验收 (2 分 20 秒)`
+- **待办任务数**: `5`（Level 3: 1, FIX: 4）
+- **最近一次更新**: `2026-04-16 — T3.2.4 实现路径调整：移除 recognize_spirit_list 工具，改为多模态 LLM 直接处理图像`
 
 ### ✅ Wave 1 — Data Spine 基础脊柱 (COMPLETED)
 `T1.1.1` ✅, `T1.1.2` ✅, `T1.2.1` ✅
@@ -86,7 +86,7 @@
 ### ✅ Wave 2 — Static Knowledge + Card Skeleton (COMPLETED)
 `T1.2.2` ✅, `T2.1.1` ✅
 
-### 🌊 Wave 3 — Agent Backend Foundation (COMPLETED)
+### ✅ Wave 3 — Agent Backend Foundation (COMPLETED)
 `T3.1.1` ✅, `T3.1.2` ✅, `T2.2.1` ✅, `T3.2.1` ✅, `T3.2.2` ✅, `T3.2.3` ✅, `T3.2.4` ✅
 
 ### 🔧 Phase 3 Integration (COMPLETED)
@@ -110,9 +110,18 @@
 
 ### 🔧 Data-Layer Facade 接线修复 (COMPLETED)
 
-### ✅ System 5 — Deployment (IN PROGRESS)
+### ✅ System 5 — Deployment (COMPLETED)
 `T5.1.1` ✅ (Docker Compose 部署文档 + 冷启动演练验收: 2 分 20 秒)
 `DataLayerFacade` 4 个 NotImplementedError 接通 + `search_spirits` 新实现 + `NameResolver.canonical_names` 属性
+
+### 🌊 Wave 1 — Design Alignment: Quota + Session (COMPLETED)
+`FIX-QUOTA-1` ✅, `FIX-SESSION-1` ✅
+
+### 🌊 Wave 2 — Design Alignment: Runtime + Route + Doc (COMPLETED)
+`FIX-QUOTA-2` ✅, `FIX-RUNTIME-1` ✅, `FIX-ROUTE-1` ✅, `FIX-DOC-1` ✅
+
+### 🌊 Wave 3 — 架构审查报告修复（P0 优先级）(IN PROGRESS)
+`T3.2.4`, `FIX-SECURITY-1`
 
 ---
 
@@ -168,8 +177,16 @@ src/
 │   │   ├── model_catalog.py    ← 受控虚拟模型目录
 │   │   ├── session_service.py  ← 会话键解析 + 内存 Registry + 闲置清理
 │   │   └── request_context.py  ← ChatRequestContext
-│   ├── runtime/                ← Agent SDK 运行时 (待实现)
-│   ├── integrations/           ← 跨系统客户端 (待实现)
+│   ├── runtime/                ← Agent SDK 运行时
+│   │   ├── agent_factory.py    ← Team Builder Agent + owned_spirits 注入
+│   │   ├── provider_factory.py ← 按 ModelCatalog 构建 Provider / RunConfig
+│   │   ├── recognition_tool.py ← 截图识别确认流工具
+│   │   ├── runtime_service.py  ← run_agent_turn + run_agent_streamed
+│   │   ├── team_builder_tools.py ← 配队/技能调优工具链
+│   │   └── tool_registry.py    ← 运行时工具注册表
+│   ├── integrations/           ← 跨系统客户端
+│   │   ├── data_layer_client.py ← 数据层客户端
+│   │   └── spirit_card_client.py ← 精灵卡片客户端
 │   └── main.py                 ← FastAPI 应用入口
 
 .anws/
@@ -185,8 +202,15 @@ src/
     │   ├── ADR_003_SESSION_MANAGEMENT.md ✅
     │   └── ADR_004_WEB_UI_PRUNING_STRATEGY.md ✅
     ├── 04_SYSTEM_DESIGN/
-    │   ├── agent-backend-system.md  ✅
-    │   └── _research/agent-backend-system-research.md ✅
+    │   ├── agent-backend-system.md        ✅
+    │   ├── agent-backend-system.detail.md ✅
+    │   ├── data-layer-system.md           ✅
+    │   ├── data-layer-system.detail.md    ✅
+    │   ├── spirit-card-system.md          ✅
+    │   ├── spirit-card-system.detail.md   ✅
+    │   ├── web-ui-system.md               ✅
+    │   ├── web-ui-system.detail.md        ✅
+    │   └── _research/*                    ✅
     ├── 05_TASKS.md         ✅
     └── 06_CHANGELOG.md     ✅
 
@@ -195,7 +219,6 @@ concept_model.json          → .anws/v2/concept_model.json
 ```
 
 ---
-
 ## 🧭 导航指南 (Navigation Guide)
 
 > **注意**: 此部分由 `/genesis` 维护。
@@ -230,11 +253,10 @@ concept_model.json          → .anws/v2/concept_model.json
 
 ### 当前任务状态
 - 任务清单: .anws/v2/05_TASKS.md
-- 总任务数: 24, 已完成: 3, 待办: 21
+- 总任务数: 31, 已完成: 31, 待办: 0
 - Sprint 数: 4
-- Wave 1: ✅ 已完成 (T1.1.1, T1.1.2, T1.2.1)
-- Wave 2 建议: T1.2.2, T2.1.1, T2.1.2
-- 最近更新: 2026-04-10 Wave 1 完成
+- Wave 状态: ✅ S1-S4 + Deployment + Design Alignment 全部完成
+- 最近更新: 2026-04-15 System 5 Design Alignment 全部完成
 
 <!-- AUTO:END -->
 

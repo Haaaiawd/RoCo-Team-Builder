@@ -121,9 +121,9 @@
   <div class="spirit-card">
     {# --- 标题 + 系别徽章 --- #}
     <div class="spirit-card__header">
-      <h2 class="spirit-card__title">{{ card.display_name }}</h2>
+      <h2 class="spirit-card__title">{{ card.display_name|safe }}</h2>
       {% for t in card.types %}
-      <span class="spirit-card__type-badge">{{ t }}</span>
+      <span class="spirit-card__type-badge">{{ t|safe }}</span>
       {% endfor %}
     </div>
 
@@ -131,7 +131,7 @@
     {% if card.bloodline_type %}
     <div class="spirit-card__section">
       <div class="spirit-card__label">血脉</div>
-      <div>{{ card.bloodline_type }}</div>
+      <div>{{ card.bloodline_type|safe }}</div>
     </div>
     {% endif %}
 
@@ -143,8 +143,8 @@
         {% for item in card.stat_items %}
         {% if item.value is not none %}
         <div class="spirit-card__stat-item">
-          <div class="spirit-card__stat-value">{{ item.value }}</div>
-          <div class="spirit-card__stat-label">{{ item.label }}</div>
+          <div class="spirit-card__stat-value">{{ item.value|safe }}</div>
+          <div class="spirit-card__stat-label">{{ item.label|safe }}</div>
         </div>
         {% endif %}
         {% endfor %}
@@ -158,8 +158,8 @@
       <div class="spirit-card__label">技能</div>
       <div class="spirit-card__skill-list">
         {% for skill in card.skills %}
-        <span class="spirit-card__skill-tag" {% if skill.description %}title="{{ skill.description }}"{% endif %}>
-          {{ skill.name }}{% if skill.type %}<small style="color:#999;margin-left:4px">{{ skill.type }}</small>{% endif %}
+        <span class="spirit-card__skill-tag" {% if skill.description %}title="{{ skill.description|safe }}"{% endif %}>
+          {{ skill.name|safe }}{% if skill.type %}<small style="color:#999;margin-left:4px">{{ skill.type|safe }}</small>{% endif %}
         </span>
         {% endfor %}
       </div>
@@ -174,7 +174,7 @@
         {% for node in card.evolution_chain %}
         {% if not loop.first %}<span class="spirit-card__evo-arrow">→</span>{% endif %}
         <span class="spirit-card__evo-node">
-          {{ node.stage_name }}{% if node.condition %}<small style="color:#999;margin-left:4px">({{ node.condition }})</small>{% endif %}
+          {{ node.stage_name|safe }}{% if node.condition %}<small style="color:#999;margin-left:4px">({{ node.condition|safe }})</small>{% endif %}
         </span>
         {% endfor %}
       </div>
@@ -185,7 +185,7 @@
     {% if card.wiki_url %}
     <hr class="spirit-card__divider">
     <div class="spirit-card__source">
-      数据来源：<a href="{{ card.wiki_url }}" target="_blank" rel="noopener noreferrer">{{ card.source_label }}</a>
+      数据来源：<a href="{{ card.wiki_url }}" target="_blank" rel="noopener noreferrer">{{ card.source_label|safe }}</a>
     </div>
     {% endif %}
   </div>

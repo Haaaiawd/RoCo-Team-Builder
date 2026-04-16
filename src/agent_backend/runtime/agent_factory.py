@@ -46,6 +46,10 @@ class AgentFactory:
         self._session_record = session_record
         self._tools = TeamBuilderTools(data_client, session_record)
 
+    def set_owned_spirits(self, spirit_names: list[str]) -> None:
+        """设置用户拥有的精灵约束（从 session 注入）。"""
+        self._tools.set_owned_spirits(spirit_names)
+
     def create_team_builder_agent(self) -> Agent:
         """创建配队推理 Agent。
 

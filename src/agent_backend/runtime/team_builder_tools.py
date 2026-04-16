@@ -13,7 +13,7 @@
 
 from __future__ import annotations
 
-from typing import Annotated, Callable
+from typing import Annotated, Any, Callable
 
 try:
     from agents import function_tool

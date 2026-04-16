@@ -9,7 +9,6 @@
 
 不允许回退到仅 user_id 或随机 key。
 """
-
 from __future__ import annotations
 
 import asyncio
@@ -105,7 +104,9 @@ class SessionRegistry:
     def get_or_create(self, session_key: str) -> SessionRecord:
         """获取或创建会话记录。"""
         if session_key not in self._sessions:
-            self._sessions[session_key] = SessionRecord(session_key=session_key)
+            from .session_extensions import SessionRecordExtended
+
+            self._sessions[session_key] = SessionRecordExtended(session_key=session_key)
         record = self._sessions[session_key]
         record.touch()
         return record

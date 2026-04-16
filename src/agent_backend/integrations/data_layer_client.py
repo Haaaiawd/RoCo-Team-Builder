@@ -68,7 +68,7 @@ class DataLayerClient:
                 "wiki_url": profile_dict.get("wiki_url"),
                 "error_message": None,
             }
-        except SpiritNotFoundError as exc:
+        except SpiritNotFoundError:
             wiki_link = await self._facade.build_wiki_link(spirit_name)
             return {
                 "success": False,
@@ -90,16 +90,16 @@ class DataLayerClient:
                 "success": False,
                 "spirit_profile": None,
                 "wiki_url": exc.wiki_url,
-                "error_message": f"BWIKI 请求超时，请稍后重试",
+                "error_message": "BWIKI 请求超时，请稍后重试",
             }
         except WikiParseError as exc:
             return {
                 "success": False,
                 "spirit_profile": None,
                 "wiki_url": exc.wiki_url,
-                "error_message": f"页面解析失败",
+                "error_message": "页面解析失败",
             }
-        except DataLayerError as exc:
+        except DataLayerError:
             return {
                 "success": False,
                 "spirit_profile": None,

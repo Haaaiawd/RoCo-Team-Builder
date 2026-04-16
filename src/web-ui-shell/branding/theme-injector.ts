@@ -96,17 +96,22 @@ export class ThemeInjector {
 			existing.remove();
 		}
 
-		// 创建字体链接元素
-		const fontLink = document.createElement('link');
-		fontLink.id = this.fontLinkId;
-		fontLink.rel = 'stylesheet';
-		
-		// 组合所有 Google Fonts URL
-		const fontUrls = this.config.fonts?.map(f => f.url).join('&');
-		fontLink.href = fontUrls || '';
+		// 为每个字体创建独立的 link 标签
+		// Google Fonts 各 URL 是完整独立链接，不能简单 & 拼接
+		if (this.config.fonts) {
+			const container = document.createElement('div');
+			container.id = this.fontLinkId;
+			container.style.display = 'none';
 
-		// 插入到 head
-		document.head.appendChild(fontLink);
+			for (const font of this.config.fonts) {
+				const fontLink = document.createElement('link');
+				fontLink.rel = 'stylesheet';
+				fontLink.href = font.url;
+				container.appendChild(fontLink);
+			}
+
+			document.head.appendChild(container);
+		}
 	}
 
 	/**

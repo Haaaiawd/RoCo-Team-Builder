@@ -289,6 +289,28 @@ def run_agent_turn(context: ChatRequestContext, session_items: list[dict]):
 
 > **注意事项**: 历史消息与本轮输入的拼接顺序必须稳定，否则会导致多轮对话语义漂移。
 
+### §3.6 `evict_idle_sessions(registry, now)`
+
+**对应契约**: L0 §5.1 — `evict_idle_sessions(registry, now)`
+**准入理由**: 含 TTL 截止时间计算 + 遍历删除顺序约束
+
+```python
+def evict_idle_sessions(registry: dict[str, SessionRecord], now: datetime) -> list[str]:
+    cutoff = now - timedelta(minutes=SESSION_POLICY["idle_ttl_minutes"])
+    evicted_keys = []
+
+    for session_key, record in registry.items():
+        if record.last_access_at <= cutoff:
+            evicted_keys.append(session_key)
+
+    for session_key in evicted_keys:
+        del registry[session_key]
+
+    return evicted_keys
+```
+
+> **注意事项**: 不能在遍历 `registry.items()` 的同时原地删除；必须先收集待清理 key，再统一删除，否则会破坏 janitor 的稳定性与可预测性。
+
 ### §3.7 `enforce_builtin_quota(context, policy, state_store)`
 
 **对应契约**: L0 §5.1 — `enforce_builtin_quota(context, quota_state)`

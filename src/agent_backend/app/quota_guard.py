@@ -10,55 +10,71 @@
 对齐: agent-backend-system.md §3.5 错误矩阵、§3.6 Builtin Quota
 验收标准: T3.3.1 额度耗尽返回 QUOTA_ 错误
 """
-
 from __future__ import annotations
 
 from dataclasses import dataclass, field
 from datetime import datetime, timedelta, timezone
-from enum import Enum
-from typing import Any
+from typing import Literal
+
+from .request_context import ChatRequestContext
 
 
-class QuotaDecision(Enum):
+@dataclass
+class QuotaDecision:
     """额度决策结果。"""
 
-    ALLOWED = "allowed"
-    QUOTA_EXCEEDED = "quota_exceeded"
+    allowed: bool
+    error_code: str | None
+    retry_after_seconds: int | None
+    suggested_route: Literal["builtin", "byok"] | None
 
 
 @dataclass
 class BuiltinQuotaPolicy:
     """Builtin 轨道额度策略。"""
 
-    requests_per_window: int = 100  # 时间窗口内最大请求数
-    window_minutes: int = 60  # 时间窗口长度（分钟）
+    owner_scope: Literal["ip", "session"] = "session"
+    window_seconds: int = 1800
+    limit_tokens: int = 120000
+    exhaustion_action: Literal["suggest_byok"] = "suggest_byok"
+
+    def owner_key_for(self, context: ChatRequestContext) -> str:
+        if self.owner_scope == "ip":
+            return context.request_headers.get("x-forwarded-for", "unknown_ip")
+        return context.session_key
 
 
 @dataclass
 class BuiltinQuotaState:
     """Builtin 轨道额度状态。"""
 
-    user_id: str
-    request_count: int = 0
-    window_start: datetime = field(default_factory=lambda: datetime.now(timezone.utc))
+    owner_key: str
+    window_started_at: datetime = field(default_factory=lambda: datetime.now(timezone.utc))
+    tokens_used: int = 0
+    tokens_remaining: int = 0
+    status: Literal["available", "exhausted"] = "available"
 
     def is_window_expired(self, policy: BuiltinQuotaPolicy) -> bool:
         """判断时间窗口是否已过期。"""
         now = datetime.now(timezone.utc)
-        return (now - self.window_start) > timedelta(minutes=policy.window_minutes)
+        return (now - self.window_started_at) > timedelta(seconds=policy.window_seconds)
 
-    def reset_window(self) -> None:
+    def reset_window(self, policy: BuiltinQuotaPolicy) -> None:
         """重置时间窗口和计数器。"""
-        self.window_start = datetime.now(timezone.utc)
-        self.request_count = 0
+        self.window_started_at = datetime.now(timezone.utc)
+        self.tokens_used = 0
+        self.tokens_remaining = policy.limit_tokens
+        self.status = "available"
 
-    def increment(self) -> None:
-        """增加请求计数。"""
-        self.request_count += 1
+    def consume(self, token_cost: int, policy: BuiltinQuotaPolicy) -> None:
+        """消耗额度并刷新状态。"""
+        self.tokens_used += token_cost
+        self.tokens_remaining = max(0, policy.limit_tokens - self.tokens_used)
+        self.status = "exhausted" if self.tokens_used >= policy.limit_tokens else "available"
 
-    def is_quota_exceeded(self, policy: BuiltinQuotaPolicy) -> bool:
-        """判断额度是否已超限。"""
-        return self.request_count >= policy.requests_per_window
+    def is_exhausted(self) -> bool:
+        """判断额度是否已耗尽。"""
+        return self.status == "exhausted"
 
 
 class QuotaStore:
@@ -67,20 +83,53 @@ class QuotaStore:
     def __init__(self) -> None:
         self._states: dict[str, BuiltinQuotaState] = {}
 
-    def get_state(self, user_id: str) -> BuiltinQuotaState:
-        """获取用户额度状态，不存在则创建。"""
-        if user_id not in self._states:
-            self._states[user_id] = BuiltinQuotaState(user_id=user_id)
-        return self._states[user_id]
+    def get_or_create(self, owner_key: str, policy: BuiltinQuotaPolicy) -> BuiltinQuotaState:
+        """获取额度状态，不存在则按策略初始化。"""
+        if owner_key not in self._states:
+            state = BuiltinQuotaState(owner_key=owner_key)
+            state.reset_window(policy)
+            self._states[owner_key] = state
+        return self._states[owner_key]
 
-    def reset_state(self, user_id: str) -> None:
+    def reset_state(self, owner_key: str) -> None:
         """重置用户额度状态。"""
-        if user_id in self._states:
-            del self._states[user_id]
+        if owner_key in self._states:
+            del self._states[owner_key]
+
+
+def _seconds_until_window_reset(
+    state: BuiltinQuotaState,
+    policy: BuiltinQuotaPolicy,
+) -> int:
+    """计算距离窗口重置的剩余秒数。"""
+    window_end = state.window_started_at + timedelta(seconds=policy.window_seconds)
+    now = datetime.now(timezone.utc)
+    remaining = (window_end - now).total_seconds()
+    return max(0, int(remaining))
+
+
+def _estimate_token_cost(context: ChatRequestContext) -> int:
+    token_budget = context.normalized_token_budget()
+    if token_budget is not None and token_budget > 0:
+        return token_budget
+
+    total_text_chars = 0
+    for message in context.messages:
+        content = message.get("content")
+        if isinstance(content, str):
+            total_text_chars += len(content)
+            continue
+        if not isinstance(content, list):
+            continue
+        for part in content:
+            if isinstance(part, dict) and part.get("type") == "text":
+                total_text_chars += len(part.get("text", ""))
+
+    return max(1, total_text_chars // 4)
 
 
 def enforce_builtin_quota(
-    context: dict[str, Any],
+    context: ChatRequestContext,
     policy: BuiltinQuotaPolicy,
     store: QuotaStore,
 ) -> QuotaDecision:
@@ -89,27 +138,54 @@ def enforce_builtin_quota(
     对齐: agent-backend-system.md §5.1 enforce_builtin_quota
 
     Args:
-        context: ChatRequestContext（简化为 dict）
+        context: ChatRequestContext
         policy: 额度策略
         store: 额度状态存储
 
     Returns:
-        QuotaDecision.ALLOWED 或 QuotaDecision.QUOTA_EXCEEDED
+        结构化 QuotaDecision
     """
-    user_id = context.get("user_id")
-    if not user_id:
-        return QuotaDecision.ALLOWED  # 无 user_id 时跳过额度检查
+    owner_key = policy.owner_key_for(context)
+    if not owner_key:
+        return QuotaDecision(
+            allowed=True,
+            error_code=None,
+            retry_after_seconds=None,
+            suggested_route="builtin",
+        )
 
-    state = store.get_state(user_id)
+    state = store.get_or_create(owner_key, policy)
 
     # 检查时间窗口是否过期
     if state.is_window_expired(policy):
-        state.reset_window()
+        state.reset_window(policy)
+
+    if state.is_exhausted():
+        return QuotaDecision(
+            allowed=False,
+            error_code="QUOTA_WINDOW_EXHAUSTED",
+            retry_after_seconds=_seconds_until_window_reset(state, policy),
+            suggested_route="byok",
+        )
+
+    token_cost = _estimate_token_cost(context)
 
     # 检查额度是否超限
-    if state.is_quota_exceeded(policy):
-        return QuotaDecision.QUOTA_EXCEEDED
+    if state.tokens_used + token_cost > policy.limit_tokens:
+        state.tokens_remaining = 0
+        state.status = "exhausted"
+        return QuotaDecision(
+            allowed=False,
+            error_code="QUOTA_WINDOW_EXHAUSTED",
+            retry_after_seconds=_seconds_until_window_reset(state, policy),
+            suggested_route="byok",
+        )
 
     # 额度允许，增加计数
-    state.increment()
-    return QuotaDecision.ALLOWED
+    state.consume(token_cost, policy)
+    return QuotaDecision(
+        allowed=True,
+        error_code=None,
+        retry_after_seconds=None,
+        suggested_route="builtin",
+    )

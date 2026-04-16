@@ -110,7 +110,7 @@ class ToolRegistry:
                 "candidates": candidates,
                 "error_message": None,
             }
-        except Exception as exc:
+        except Exception:
             return {
                 "success": False,
                 "candidates": [],

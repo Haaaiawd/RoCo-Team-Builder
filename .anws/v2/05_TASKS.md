@@ -297,16 +297,16 @@ graph TD
   - **估时**: 7h
   - **依赖**: T1.2.1, T1.2.2, T3.1.2
   - **优先级**: P0
-
-- [x] **T3.2.4** [REQ-002]: 实现截图识别确认流与 owned_spirits 会话约束
-  - **描述**: 在 Agent 收到图片后，先将多模态 LLM 识别出的精灵名称列表结构化为 `RecognitionResult`，以工具调用结果形式回传给前端展示并等待用户确认；用户确认后，将 `owned_spirits` 列表持久化到当前会话上下文；后续推理工具链在 `owned_spirits` 非空时，仅从该列表内推荐精灵，若确需列表外精灵，须先向用户询问
-  - **输入**: `01_PRD.md` US-002 AC-1（识别清单确认）、AC-3（推荐不超出列表）；`02_ARCHITECTURE_OVERVIEW.md` §3.5 错误矩阵；`04_SYSTEM_DESIGN/agent-backend-system.md` §4.2 `Tool Registry`、§5.1 `run_agent_turn`、§6 数据模型；`03_ADR/ADR_003_SESSION_MANAGEMENT.md`（会话边界不新增并行状态源）；T3.1.2 产出的会话仓库、T3.2.1 产出的请求归一化器、T3.2.3 产出的配队工具链
-  - **输出**: `src/agent-backend/runtime/recognition_tool.py`（`recognize_spirit_list` 工具，输出 `RecognitionResult`）、`src/agent-backend/app/session_extensions.py`（为 `SessionItem` 扩展 `owned_spirits: list[str]` 字段）、`src/agent-backend/runtime/team_builder_tools.py`（在配队工具链入口处读取 `owned_spirits` 并约束候选池）
-  - **📎 参考**: `01_PRD.md` US-002、US-005 §AC-2（"记住该列表，不重复询问"）；`03_ADR/ADR_003_SESSION_MANAGEMENT.md`；`04_SYSTEM_DESIGN/agent-backend-system.md` §4.2、§5.1
+- [ ] **T3.2.4** [REQ-002]: 实现截图识别确认流与 owned_spirits 会话约束
+  - **描述**: 在 Agent 收到图片后，多模态 LLM 直接识别精灵名称列表并输出结构化结果；用户确认后，将 `owned_spirits` 列表持久化到当前会话上下文；后续推理工具链在 `owned_spirits` 非空时，仅从该列表内推荐精灵，若确需列表外精灵，须先向用户询问
+  - **⚠️ 注意**: 移除 `recognize_spirit_list` 工具，由多模态 LLM 直接处理图像并输出结构化结果（精灵名称列表 + 不确定项）
+  - **输入**: `01_PRD.md` US-002 AC-1（识别清单确认）、AC-3（推荐不超出列表）；`02_ARCHITECTURE_OVERVIEW.md` §3.5 错误矩阵；`04_SYSTEM_DESIGN/agent-backend-system.md` §5.1 `run_agent_turn`、§6 数据模型；`03_ADR/ADR_003_SESSION_MANAGEMENT.md`（会话边界不新增并行状态源）；T3.1.2 产出的会话仓库、T3.2.1 产出的请求归一化器、T3.2.3 产出的配队工具链
+  - **输出**: `src/agent-backend/app/session_extensions.py`（为 `SessionItem` 扩展 `owned_spirits: list[str]` 字段）、`src/agent-backend/runtime/team_builder_tools.py`（在配队工具链入口处读取 `owned_spirits` 并约束候选池）
+  - **📎 参考**: `01_PRD.md` US-002、US-005 §AC-2（"记住该列表，不重复询问"）；`03_ADR/ADR_003_SESSION_MANAGEMENT.md`；`04_SYSTEM_DESIGN/agent-backend-system.md` §5.1
   - **验收标准**:
     - Given 用户上传精灵列表截图
-    - When Agent 调用 `recognize_spirit_list` 工具
-    - Then 返回结构化 `RecognitionResult`（精灵名称列表 + 不确定项），并在对话中展示确认卡片等待用户确认
+    - When Agent 收到图片
+    - Then 多模态 LLM 直接识别并输出结构化精灵名称列表 + 不确定项，并在对话中展示确认卡片等待用户确认
     - Given 用户确认精灵列表
     - When 确认信号被接收
     - Then `owned_spirits` 写入当前会话上下文，后续工具调用可读取
@@ -315,10 +315,10 @@ graph TD
     - Then 候选只从 `owned_spirits` 内选取；若无法凑齐完整队伍，先向用户说明并询问是否放宽限制，而不是静默引入列表外精灵
     - Given 截图中存在模糊或遮挡的精灵名称
     - When 识别置信度低于阈值
-    - Then `RecognitionResult.uncertain_items` 非空，Agent 在确认卡片中列出不确定项并提示用户手动补充
+    - Then 不确定项非空，Agent 在确认卡片中列出不确定项并提示用户手动补充
   - **验证类型**: 集成测试
   - **验证说明**: 编写 Agent 集成测试，覆盖识别→确认→约束推荐完整状态机；用固定截图样本验证 `owned_spirits` 写入会话、候选池约束与不确定项提示三条路径
-  - **估时**: 6h
+  - **估时**: 4h
   - **依赖**: T3.1.2, T3.2.1, T3.2.3
   - **优先级**: P0
 
@@ -401,7 +401,7 @@ graph TD
     - Then 能看到内置轨道与 BYOK 轨道的清晰差异提示
     - Given 用户输入 BYOK 配置
     - When 保存连接
-    - Then API Key 仅保存在 `localStorage`，不发送到服务端
+    - Then API Key 真实保存在 localStorage（不替换为 ***），刷新页面后可读取使用，不发送到服务端
     - Given 当前轨道不可用
     - When 用户发送消息
     - Then 不发生静默切轨，而是显示明确的下一步提示
@@ -583,7 +583,192 @@ graph TD
 
 ---
 
-## System 5: deployment
+## System 5: Design Alignment (设计对齐修复)
+
+> **说明**: 本系统为质疑报告发现的实现与设计文档偏离问题而添加的修复任务，确保代码严格对齐 detail.md 规范。
+
+### Phase 1: Quota 对齐修复
+
+- [x] **FIX-QUOTA-1** [REQ-002]: 重构 QuotaDecision 为 dataclass 以对齐 detail.md §2
+  - **描述**: 将 QuotaDecision 从 Enum 改为 dataclass，添加 allowed、error_code、retry_after_seconds、suggested_route 字段，确保与设计文档完全对齐
+  - **输入**: `04_SYSTEM_DESIGN/agent-backend-system.detail.md §2`
+  - **输出**: `src/agent_backend/app/quota_guard.py`
+  - **📎 参考**: `04_SYSTEM_DESIGN/agent-backend-system.detail.md §2 QuotaDecision`
+  - **验收标准**:
+    - Given detail.md §2 定义的 QuotaDecision dataclass
+    - When 重构 quota_guard.py 中的 QuotaDecision
+    - Then QuotaDecision 为 dataclass 且包含 allowed、error_code、retry_after_seconds、suggested_route 四个字段
+    - Given routes_openai.py 调用 quota_decision.retry_after_seconds 和 suggested_route
+    - When 执行 quota 检查
+    - Then 不再出现 AttributeError，字段访问正常
+  - **验证类型**: 单元测试
+  - **验证说明**: 编写单元测试验证 QuotaDecision 字段结构和属性访问
+  - **估时**: 2h
+  - **依赖**: 无
+  - **优先级**: P0
+
+- [x] **FIX-QUOTA-2** [REQ-002]: 重构 BuiltinQuotaPolicy 字段以对齐 detail.md §2
+  - **描述**: 将 BuiltinQuotaPolicy 字段从 requests_per_window/window_minutes 改为 owner_scope/window_seconds/limit_tokens/exhaustion_action，添加 owner_key_for() 方法，确保与设计文档完全对齐
+  - **输入**: `04_SYSTEM_DESIGN/agent-backend-system.detail.md §2`
+  - **输出**: `src/agent_backend/app/quota_guard.py`
+  - **📎 参考**: `04_SYSTEM_DESIGN/agent-backend-system.detail.md §2 BuiltinQuotaPolicy`
+  - **验收标准**:
+    - Given detail.md §2 定义的 BuiltinQuotaPolicy dataclass
+    - When 重构 quota_guard.py 中的 BuiltinQuotaPolicy
+    - Then BuiltinQuotaPolicy 包含 owner_scope、window_seconds、limit_tokens、exhaustion_action 四个字段
+    - Given BuiltinQuotaPolicy.owner_key_for() 方法
+    - When 传入 ChatRequestContext
+    - Then 根据 owner_scope 返回正确的 owner_key（ip 或 session_key）
+  - **验证类型**: 单元测试
+  - **验证说明**: 编写单元测试验证 BuiltinQuotaPolicy 字段结构和 owner_key_for() 逻辑
+  - **估时**: 2h
+  - **依赖**: FIX-QUOTA-1
+  - **优先级**: P0
+
+### Phase 2: Runtime 对齐修复
+
+- [x] **FIX-RUNTIME-1** [REQ-001]: 调整 run_agent_turn 签名以对齐 detail.md §3.5
+  - **描述**: 将异步生成器 run_agent_streamed 调整为同步函数 run_agent_turn，返回 runtime events 而非直接 yield SSE chunk，改用 build_provider_for_model + build_tool_registry 而非 AgentFactory + RunConfig，确保与设计文档完全对齐
+  - **输入**: `04_SYSTEM_DESIGN/agent-backend-system.detail.md §3.5`
+  - **输出**: `src/agent_backend/runtime/runtime_service.py`, `src/agent_backend/runtime/provider_factory.py`
+  - **📎 参考**: `04_SYSTEM_DESIGN/agent-backend-system.detail.md §3.5 run_agent_turn`
+  - **验收标准**:
+    - Given detail.md §3.5 定义的 run_agent_turn 签名
+    - When 重构 runtime_service.py 中的 run_agent_streamed
+    - Then 函数签名为同步函数 run_agent_turn(context, session_items)，返回 runtime events
+    - Given build_provider_for_model 和 build_tool_registry 函数
+    - When 调用 run_agent_turn
+    - Then 使用这两个函数而非 AgentFactory + RunConfig
+  - **验证类型**: 单元测试
+  - **验证说明**: 编写单元测试验证 run_agent_turn 签名和返回值
+  - **估时**: 3h
+  - **依赖**: FIX-QUOTA-2
+  - **优先级**: P0
+
+### Phase 3: 并发与 Session 对齐修复
+
+- [x] **FIX-ROUTE-1** [REQ-005]: 添加 session.lock 保护以对齐 detail.md §4.1
+  - **描述**: 在 routes_openai.py 的请求处理路径中添加 with session.lock 保护，确保并发请求不会破坏 session 状态一致性
+  - **输入**: `04_SYSTEM_DESIGN/agent-backend-system.detail.md §4.1`
+  - **输出**: `src/agent_backend/api/routes_openai.py`
+  - **📎 参考**: `04_SYSTEM_DESIGN/agent-backend-system.detail.md §4.1 请求处理路径选择`
+  - **验收标准**:
+    - Given detail.md §4.1 明确要求的 with session.lock
+    - When 重构 routes_openai.py 的请求处理路径
+    - Then 在 session.touch() 和 runtime.run() 前添加 with session.lock 保护
+    - Given 10 个并发请求命中同一 session
+    - When 同时执行
+    - Then session 状态保持一致，不出现并发修改冲突
+  - **验证类型**: 集成测试
+  - **验证说明**: 运行并发测试验证 session.lock 保护生效
+  - **估时**: 1h
+  - **依赖**: FIX-RUNTIME-1
+  - **优先级**: P1
+
+- [x] **FIX-SESSION-1** [REQ-005]: 集成 SessionRecordExtended 到 SessionRegistry
+  - **描述**: 修改 SessionRegistry.get_or_create 创建 SessionRecordExtended 而非 SessionRecord，确保 owned_spirits 约束真正生效
+  - **输入**: `04_SYSTEM_DESIGN/agent-backend-system.detail.md §2`
+  - **输出**: `src/agent_backend/app/session_service.py`
+  - **📎 参考**: `04_SYSTEM_DESIGN/agent-backend-system.detail.md §2 SessionRecordExtended`
+  - **验收标准**:
+    - Given SessionRecordExtended 定义了 owned_spirits 字段
+    - When SessionRegistry.get_or_create 创建 session
+    - Then 创建的是 SessionRecordExtended 而非 SessionRecord
+    - Given session.set_owned_spirits() 被调用
+    - When TeamBuilderTools 检查 owned_spirits
+    - Then 能正确获取到用户拥有的精灵列表，约束生效
+  - **验证类型**: 单元测试
+  - **验证说明**: 编写单元测试验证 SessionRegistry 创建 SessionRecordExtended 和 owned_spirits 约束
+  - **估时**: 1h
+  - **依赖**: 无
+  - **优先级**: P1
+
+### Phase 4: 文档补齐
+
+- [x] **FIX-DOC-1**: 在 detail.md 中补充 evict_idle_sessions 伪代码
+  - **描述**: 在 agent-backend-system.detail.md 中添加 §3.6 evict_idle_sessions(registry, now) 的完整伪代码，确保设计文档完整性
+  - **输入**: `04_SYSTEM_DESIGN/agent-backend-system.md §5.1`
+  - **输出**: `04_SYSTEM_DESIGN/agent-backend-system.detail.md`
+  - **📎 参考**: `04_SYSTEM_DESIGN/agent-backend-system.md §5.1 evict_idle_sessions`
+  - **验收标准**:
+    - Given agent-backend-system.md L0 中引用了 evict_idle_sessions
+    - When 检查 detail.md
+    - Then §3.6 包含 evict_idle_sessions 的完整伪代码实现
+    - Given 伪代码包含窗口判断、清理逻辑和返回值
+    - When 阅读 detail.md
+    - Then 实现者无需猜测 janitor 的具体逻辑
+  - **验证类型**: 文档审查
+  - **验证说明**: 人工审查 detail.md §3.6 伪代码完整性和准确性
+  - **估时**: 0.5h
+  - **依赖**: 无
+  - **优先级**: P2
+
+- [ ] **FIX-SECURITY-1** [PRD §6.2]: 修复后端信任边界
+  - **描述**: 修改 docker-compose.yml 取消对宿主机公开 8000 端口，后端仅接受来自可信代理（Web UI 容器）的请求，或添加令牌校验；防止伪造 X-OpenWebUI-User-Id/X-OpenWebUI-Chat-Id 头部访问他人会话
+  - **输入**: 审查报告 §5.2 (High Issue #2)，`01_PRD.md` §6.2 安全与合规
+  - **输出**: `docker-compose.yml`, `src/agent_backend/api/routes_openai.py`
+  - **📎 参考**: `01_PRD.md` §6.2，ADR-003
+  - **验收标准**:
+    - Given 外部客户端直接访问宿主机 8000 端口
+    - When 请求 /v1/chat/completions 并伪造头部
+    - Then 返回 403 或被拒绝，无法访问他人会话
+    - Given Web UI 容器内请求
+    - When 调用后端
+    - Then 正常通过可信代理
+  - **验证类型**: 安全测试
+  - **验证说明**: 编写安全测试验证伪造头部访问被拒绝
+  - **估时**: 3h
+  - **依赖**: 无
+  - **优先级**: P0
+
+- [ ] **FIX-DOC-2**: 统一前端文档与测试契约
+  - **描述**: 修改根 README.md 删除或降级前端测试命令，与 src/web-ui-shell/README.md 声明保持一致
+  - **输入**: 审查报告 §5.2 (Medium Issue #5)
+  - **输出**: `README.md`
+  - **验收标准**:
+    - Given 评审者阅读根 README
+    - When 查看前端测试说明
+    - Then 与前端 README 不冲突
+  - **验证类型**: 文档审查
+  - **验证说明**: 人工审查两个 README 文档一致性
+  - **估时**: 0.5h
+  - **依赖**: 无
+  - **优先级**: P2
+
+- [ ] **FIX-LOG-1**: Session janitor 日志脱敏
+  - **描述**: 修改 main.py 中 _session_janitor 的日志输出，将原始 session_key 替换为哈希或截断形式
+  - **输入**: 审查报告 §5.2 (Medium Issue #6)
+  - **输出**: `src/agent_backend/main.py`
+  - **验收标准**:
+    - Given session janitor 清理会话
+    - When 记录日志
+    - Then 日志中不包含原始 user_id:chat_id，仅记录数量或哈希标识
+  - **验证类型**: 单元测试
+  - **验证说明**: 验证日志输出不包含敏感标识符
+  - **估时**: 0.5h
+  - **依赖**: 无
+  - **优先级**: P2
+
+- [ ] **FIX-DOC-3**: Web UI 壳层装配闭环文档自洽
+  - **描述**: 统一 README.md、src/web-ui-shell/README.md 与 tests/e2e/*.spec.ts 中关于 Open WebUI 容器装配的描述，确保静态可验证的装配闭环证据存在
+  - **输入**: 审查报告 §5.2 (High Issue #4)
+  - **输出**: `README.md`, `src/web-ui-shell/README.md`
+  - **验收标准**:
+    - Given 评审者阅读 README 和前端 README
+    - When 查找 Open WebUI 容器装配步骤
+    - Then 两个文档描述一致，且与 E2E 测试契约不冲突
+    - Given 静态审查
+    - When 验证 Web UI 壳层是否已装配到 Open WebUI 主路径
+    - Then 文档中提供明确的装配步骤或说明
+  - **验证类型**: 文档审查
+  - **验证说明**: 人工审查三个文档的一致性
+  - **估时**: 1h
+  - **依赖**: 无
+  - **优先级**: P1
+
+---
+
+## System 6: deployment
 
 ### Phase 1: Foundation (部署交付)
 
@@ -652,11 +837,11 @@ graph TD
 
 ## 统计
 
-- **总任务数**: 20 个 Level 3 任务 + 4 个 INT 任务 = 24（新增 T3.2.4、T5.1.1）
-- **P0 任务**: 14
-- **P1 任务**: 10
-- **P2 任务**: 0
-- **总预估工时**: 120h
+- **总任务数**: 27 个 Level 3 任务 + 4 个 INT 任务 = 31（含 System 5 Design Alignment 6 个修复任务）
+- **P0 任务**: 21
+- **P1 任务**: 9
+- **P2 任务**: 1
+- **总预估工时**: 129.5h
 - **Sprint 数**: 4（S3 含识别确认流；S4 后新增部署交付）
 
 ## 执行建议

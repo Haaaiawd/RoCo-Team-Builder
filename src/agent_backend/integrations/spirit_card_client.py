@@ -11,11 +11,9 @@ Spirit-Card 适配器 — 将 SpiritCardFacade 包装为 ISpiritCardClient 协�
 
 from __future__ import annotations
 
-from dataclasses import asdict
 from typing import Protocol
 
 from spirit_card.app.facade import SpiritCardFacade
-from spirit_card.app.contracts import RenderedSpiritCard
 
 
 class ISpiritCardClient(Protocol):
@@ -58,7 +56,7 @@ class SpiritCardClient:
                 "metadata": rendered.metadata,
                 "error_message": None,
             }
-        except Exception as exc:
+        except Exception:
             # 渲染失败时，构建最小 fallback
             if isinstance(spirit_payload, dict):
                 display_name = spirit_payload.get("display_name", spirit_payload.get("canonical_name", "未知精灵"))

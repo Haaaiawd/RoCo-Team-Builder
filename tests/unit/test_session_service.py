@@ -14,6 +14,7 @@ from datetime import datetime, timedelta, timezone
 
 import pytest
 
+from agent_backend.app.session_extensions import SessionRecordExtended
 from agent_backend.app.session_service import (
     SESSION_POLICY,
     SessionIdentityError,
@@ -130,6 +131,22 @@ class TestSessionRegistry:
         assert isinstance(record, SessionRecord)
         assert record.session_key == "u1:c1"
         assert reg.active_count == 1
+
+    def test_get_or_create_returns_extended_record(self):
+        """registry 应返回可承载 owned_spirits 的扩展 session。"""
+        reg = SessionRegistry()
+        record = reg.get_or_create("u1:c1")
+        assert isinstance(record, SessionRecordExtended)
+
+    def test_owned_spirits_persist_in_registry_session(self):
+        """同一 session_key 再次获取时，owned_spirits 应保留。"""
+        reg = SessionRegistry()
+        record = reg.get_or_create("u1:c1")
+        record.set_owned_spirits(["火神", "冰龙王"])
+
+        same_record = reg.get_or_create("u1:c1")
+        assert isinstance(same_record, SessionRecordExtended)
+        assert same_record.get_owned_spirits() == ["火神", "冰龙王"]
 
     def test_get_or_create_idempotent(self):
         """同一 key 返回同一 record。"""

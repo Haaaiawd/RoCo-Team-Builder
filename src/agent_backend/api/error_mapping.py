@@ -87,3 +87,23 @@ def from_session_identity_error(exc: SessionIdentityError) -> ProductError:
         status_code=400,
         param="headers",
     )
+
+
+def quota_exhausted_error(
+    retry_after_seconds: int | None = None,
+    suggested_route: str | None = None,
+) -> ProductError:
+    """额度耗尽产品错误 — 对齐 agent-backend-system.detail.md §3.7。"""
+    metadata: dict[str, Any] = {}
+    if retry_after_seconds is not None:
+        metadata["retry_after_seconds"] = retry_after_seconds
+    if suggested_route is not None:
+        metadata["suggested_route"] = suggested_route
+    return ProductError(
+        code="QUOTA_WINDOW_EXHAUSTED",
+        message="内置轨道额度已耗尽，请切换到 BYOK 轨道或稍后重试",
+        status_code=429,
+        error_type="quota_error",
+        retryable=True,
+        metadata=metadata or None,
+    )

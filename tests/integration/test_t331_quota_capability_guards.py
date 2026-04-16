@@ -11,6 +11,8 @@ from __future__ import annotations
 
 import pytest
 
+from agent_backend.app.request_context import ChatRequestContext
+from agent_backend.app.model_catalog import ModelCatalogEntry
 from agent_backend.app.capability_guard import CapabilityDecision, check_vision_capability
 from agent_backend.app.quota_guard import (
     BuiltinQuotaPolicy,
@@ -22,95 +24,108 @@ from agent_backend.app.quota_guard import (
 
 
 class TestQuotaGuard:
+    def _make_context(self, *, session_key: str = "user123:chat1", headers: dict[str, str] | None = None) -> ChatRequestContext:
+        return ChatRequestContext(
+            request_id="req-1",
+            session_key=session_key,
+            model_entry=ModelCatalogEntry("roco-agent", "gpt-4o", "https://example.com/v1", True, True),
+            messages=[{"role": "user", "content": "hi"}],
+            stream=False,
+            user_id="user123",
+            chat_id="chat1",
+            request_headers=headers or {},
+        )
+
     def test_quota_state_initialization(self):
         """额度状态初始化应包含默认值。"""
-        state = BuiltinQuotaState(user_id="user123")
-        assert state.user_id == "user123"
-        assert state.request_count == 0
-        assert state.window_start is not None
+        state = BuiltinQuotaState(owner_key="user123:chat1")
+        assert state.owner_key == "user123:chat1"
+        assert state.tokens_used == 0
+        assert state.window_started_at is not None
 
-    def test_quota_state_increment(self):
-        """增加请求计数应正确更新。"""
-        state = BuiltinQuotaState(user_id="user123")
-        state.increment()
-        assert state.request_count == 1
-        state.increment()
-        assert state.request_count == 2
+    def test_owner_key_for_session_scope(self):
+        policy = BuiltinQuotaPolicy(owner_scope="session")
+        context = self._make_context(session_key="user123:chat1")
+        assert policy.owner_key_for(context) == "user123:chat1"
+
+    def test_owner_key_for_ip_scope(self):
+        policy = BuiltinQuotaPolicy(owner_scope="ip")
+        context = self._make_context(headers={"x-forwarded-for": "1.2.3.4"})
+        assert policy.owner_key_for(context) == "1.2.3.4"
 
     def test_quota_state_reset(self):
         """重置应清零计数器并更新窗口开始时间。"""
-        state = BuiltinQuotaState(user_id="user123")
-        state.increment()
-        state.increment()
-        assert state.request_count == 2
+        policy = BuiltinQuotaPolicy(limit_tokens=100)
+        state = BuiltinQuotaState(owner_key="user123:chat1")
+        state.consume(50, policy)
+        state.consume(20, policy)
+        assert state.tokens_used == 70
 
-        state.reset_window()
-        assert state.request_count == 0
-        assert state.window_start is not None
+        state.reset_window(policy)
+        assert state.tokens_used == 0
+        assert state.tokens_remaining == 100
+        assert state.window_started_at is not None
 
-    def test_is_quota_exceeded(self):
+    def test_is_exhausted(self):
         """判断额度是否超限。"""
-        policy = BuiltinQuotaPolicy(requests_per_window=5, window_minutes=60)
-        state = BuiltinQuotaState(user_id="user123")
+        policy = BuiltinQuotaPolicy(limit_tokens=5)
+        state = BuiltinQuotaState(owner_key="user123:chat1")
+        state.reset_window(policy)
+        state.consume(5, policy)
+        assert state.is_exhausted() is True
 
-        for _ in range(5):
-            state.increment()
-
-        assert state.is_quota_exceeded(policy) is True
-
-        state.increment()
-        assert state.is_quota_exceeded(policy) is True
-
-    def test_quota_store_get_state(self):
+    def test_quota_store_get_or_create(self):
         """额度存储应能获取或创建用户状态。"""
+        policy = BuiltinQuotaPolicy(limit_tokens=100)
         store = QuotaStore()
-        state1 = store.get_state("user123")
-        state2 = store.get_state("user123")
+        state1 = store.get_or_create("user123:chat1", policy)
+        state2 = store.get_or_create("user123:chat1", policy)
         assert state1 is state2  # 同一用户返回同一实例
 
-        state3 = store.get_state("user456")
+        state3 = store.get_or_create("user456:chat1", policy)
         assert state3 is not state1  # 不同用户返回不同实例
 
     def test_quota_store_reset_state(self):
         """额度存储应能重置用户状态。"""
+        policy = BuiltinQuotaPolicy(limit_tokens=100)
         store = QuotaStore()
-        store.get_state("user123").increment()
-        store.reset_state("user123")
+        store.get_or_create("user123:chat1", policy).consume(10, policy)
+        store.reset_state("user123:chat1")
 
-        state = store.get_state("user123")
-        assert state.request_count == 0
+        state = store.get_or_create("user123:chat1", policy)
+        assert state.tokens_used == 0
 
     def test_enforce_builtin_quota_allowed(self):
         """额度允许时返回 ALLOWED。"""
-        policy = BuiltinQuotaPolicy(requests_per_window=10, window_minutes=60)
+        policy = BuiltinQuotaPolicy(limit_tokens=100)
         store = QuotaStore()
-        context = {"user_id": "user123"}
+        context = self._make_context()
 
         decision = enforce_builtin_quota(context, policy, store)
-        assert decision == QuotaDecision.ALLOWED
+        assert isinstance(decision, QuotaDecision)
+        assert decision.allowed is True
+        assert decision.suggested_route == "builtin"
 
     def test_enforce_builtin_quota_exceeded(self):
         """额度超限时返回 QUOTA_EXCEEDED。"""
-        policy = BuiltinQuotaPolicy(requests_per_window=2, window_minutes=60)
+        policy = BuiltinQuotaPolicy(limit_tokens=0)
         store = QuotaStore()
-        context = {"user_id": "user123"}
-
-        # 前两次请求允许
-        assert enforce_builtin_quota(context, policy, store) == QuotaDecision.ALLOWED
-        assert enforce_builtin_quota(context, policy, store) == QuotaDecision.ALLOWED
-
-        # 第三次请求超限
-        decision = enforce_builtin_quota(context, policy, store)
-        assert decision == QuotaDecision.QUOTA_EXCEEDED
-
-    def test_enforce_builtin_quota_no_user_id(self):
-        """无 user_id 时跳过额度检查。"""
-        policy = BuiltinQuotaPolicy(requests_per_window=0, window_minutes=60)
-        store = QuotaStore()
-        context = {}  # 无 user_id
+        context = self._make_context()
 
         decision = enforce_builtin_quota(context, policy, store)
-        assert decision == QuotaDecision.ALLOWED
+        assert decision.allowed is False
+        assert decision.error_code == "QUOTA_WINDOW_EXHAUSTED"
+        assert decision.suggested_route == "byok"
+
+    def test_enforce_builtin_quota_ip_scope(self):
+        """ip scope 时使用 x-forwarded-for 作为 owner key。"""
+        policy = BuiltinQuotaPolicy(owner_scope="ip", limit_tokens=100)
+        store = QuotaStore()
+        context = self._make_context(headers={"x-forwarded-for": "1.2.3.4"})
+
+        decision = enforce_builtin_quota(context, policy, store)
+        assert decision.allowed is True
+        assert store.get_or_create("1.2.3.4", policy).owner_key == "1.2.3.4"
 
 
 class TestCapabilityGuard:

@@ -94,7 +94,7 @@ class WikiGateway:
         if key in self._inflight:
             return await self._inflight[key]
 
-        loop = asyncio.get_event_loop()
+        loop = asyncio.get_running_loop()
         future: asyncio.Future[dict] = loop.create_future()
         self._inflight[key] = future
 

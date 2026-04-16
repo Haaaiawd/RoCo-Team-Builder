@@ -6,6 +6,7 @@
      spirit-card-system.detail.md §1 SANITIZATION_POLICY
 
 不允许原样注入不可信 HTML。链接必须白名单校验。
+sanitization 层负责 HTML 转义，Jinja2 模板中对已转义字段使用 |safe 防止双重转义。
 """
 
 from __future__ import annotations
@@ -19,9 +20,10 @@ from ..app.render_policy import SANITIZATION_POLICY
 def sanitize_spirit_content(card_model: SpiritCardModel) -> SpiritCardModel:
     """清洗卡片视图模型中的所有文本字段。
 
-    - 所有文本字段 HTML 转义
+    - 所有文本字段 HTML 转义（sanitization 层负责安全）
     - wiki_url 白名单校验 (仅允许 https://wiki.biligame.com/)
     - 技能描述截断到 max_skill_description_chars
+    - Jinja2 模板需对已转义字段使用 |safe 过滤器，防止双重转义
     """
     safe_url = ""
     if card_model.wiki_url.startswith("https://wiki.biligame.com/"):
