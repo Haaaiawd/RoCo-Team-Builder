@@ -2,6 +2,29 @@
 
 这是 RoCo Team Builder 的前端产品壳层，基于 Open WebUI 的受控裁剪版本。
 
+## Open WebUI 容器装配
+
+web-ui-shell 通过 Docker Compose volumes 挂载到 Open WebUI 容器：
+
+```yaml
+# docker-compose.yml
+web-ui:
+  image: ghcr.io/open-webui/open-webui:main
+  volumes:
+    - ./src/web-ui-shell:/app/web-ui-shell:ro
+    - ./src/web-ui-shell/branding:/app/web-ui-shell/branding:ro
+```
+
+**装配步骤**：
+1. Open WebUI 容器启动时，`/app/web-ui-shell` 目录被挂载为只读
+2. Open WebUI 内部会自动加载该目录下的定制代码
+3. 主题注入在浏览器端通过 `theme-injector.ts` 动态应用
+
+**静态验证证据**：
+- `docker-compose.yml` 第 42-44 行定义了 volumes 挂载
+- E2E 测试 `tests/e2e/product-shell.spec.ts` 验证装配后的 UI 行为
+- `tests/e2e/visible-feature-policy.spec.ts` 验证白名单策略生效
+
 ## 项目结构
 
 ```

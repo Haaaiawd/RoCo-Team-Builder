@@ -106,9 +106,8 @@ npm install
 cd src/agent_backend
 pytest
 
-# 前端测试
-cd src/web-ui-shell
-npm test
+# 前端测试（当前尚未配置测试环境）
+# 详见 src/web-ui-shell/README.md
 ```
 
 ---

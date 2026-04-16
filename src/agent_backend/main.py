@@ -34,8 +34,8 @@ async def _session_janitor(registry: SessionRegistry, interval_seconds: int = 30
         if evicted:
             import logging
             logging.getLogger(__name__).info(
-                "Session janitor evicted %d idle sessions: %s",
-                len(evicted), evicted,
+                "Session janitor evicted %d idle sessions",
+                len(evicted),
             )
 
 
