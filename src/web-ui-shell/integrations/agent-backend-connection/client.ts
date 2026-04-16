@@ -52,11 +52,16 @@ export class AgentBackendClient {
 	private baseUrl: string;
 	private headers: Record<string, string>;
 
-	constructor(config: { base_url: string; user_id?: string; chat_id?: string }) {
+	constructor(config: { base_url: string; user_id?: string; chat_id?: string; internal_secret?: string }) {
 		this.baseUrl = config.base_url;
 		this.headers = {
 			'Content-Type': 'application/json',
 		};
+
+		// 内部密钥验证 - 防止伪造会话头部
+		if (config.internal_secret) {
+			this.headers['X-Roco-Internal-Secret'] = config.internal_secret;
+		}
 
 		// 会话头传递契约
 		if (config.user_id) {
@@ -160,6 +165,7 @@ export function createAgentBackendClient(config: {
 	base_url: string;
 	user_id?: string;
 	chat_id?: string;
+	internal_secret?: string;
 }): AgentBackendClient {
 	return new AgentBackendClient(config);
 }
