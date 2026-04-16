@@ -43,9 +43,9 @@ export function runByokConfigTests() {
 		throw new Error('Failed to load from localStorage');
 	}
 
-	// 验证 API Key 未返回（安全措施）
-	if (loaded.api_key !== '') {
-		throw new Error('API key should not be returned from localStorage');
+	// 验证 API Key 真实保存，不是 ***
+	if (loaded.api_key !== 'sk-test-key') {
+		throw new Error(`API key should be 'sk-test-key', got '${loaded.api_key}'`);
 	}
 
 	// 测试检查是否存在

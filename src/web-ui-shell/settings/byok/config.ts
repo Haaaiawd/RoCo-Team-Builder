@@ -101,7 +101,7 @@ export class ByokConnectionManager {
 
 	/**
 	 * 保存 BYOK 配置到 localStorage
-	 * 验收标准：API Key 仅保存在 localStorage，不发送到服务端
+	 * 验收标准：API Key 真实保存在 localStorage，不替换为 ***
 	 */
 	save(entry: DirectConnectionEntry): void {
 		const validation = validateDirectConnectionEntry(entry);
@@ -109,14 +109,13 @@ export class ByokConnectionManager {
 			throw new Error(`Invalid BYOK config: ${validation.errors.join(', ')}`);
 		}
 
-		// 从 entry 中移除 api_key（安全措施）
-		const safeEntry = { ...entry, api_key: '***' };
-		localStorage.setItem(this.storageKey, JSON.stringify(safeEntry));
+		// 真实保存 api_key 到 localStorage（不替换为 ***）
+		localStorage.setItem(this.storageKey, JSON.stringify(entry));
 	}
 
 	/**
 	 * 从 localStorage 加载 BYOK 配置
-	 * 注意：API Key 不会返回，用户需要重新输入
+	 * 验收标准：API Key 可正常读取使用，不为空字符串
 	 */
 	load(): DirectConnectionEntry | null {
 		const data = localStorage.getItem(this.storageKey);
@@ -124,8 +123,6 @@ export class ByokConnectionManager {
 
 		try {
 			const entry = JSON.parse(data) as DirectConnectionEntry;
-			// API Key 在存储时已被替换为 '***'
-			entry.api_key = '';
 			return entry;
 		} catch {
 			return null;
