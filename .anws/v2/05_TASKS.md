@@ -721,7 +721,7 @@ graph TD
   - **依赖**: 无
   - **优先级**: P0
 
-- [ ] **FIX-DOC-2**: 统一前端文档与测试契约
+- [x] **FIX-DOC-2**: 统一前端文档与测试契约
   - **描述**: 修改根 README.md 删除或降级前端测试命令，与 src/web-ui-shell/README.md 声明保持一致
   - **输入**: 审查报告 §5.2 (Medium Issue #5)
   - **输出**: `README.md`
@@ -735,7 +735,7 @@ graph TD
   - **依赖**: 无
   - **优先级**: P2
 
-- [ ] **FIX-LOG-1**: Session janitor 日志脱敏
+- [x] **FIX-LOG-1**: Session janitor 日志脱敏
   - **描述**: 修改 main.py 中 _session_janitor 的日志输出，将原始 session_key 替换为哈希或截断形式
   - **输入**: 审查报告 §5.2 (Medium Issue #6)
   - **输出**: `src/agent_backend/main.py`
@@ -749,7 +749,7 @@ graph TD
   - **依赖**: 无
   - **优先级**: P2
 
-- [ ] **FIX-DOC-3**: Web UI 壳层装配闭环文档自洽
+- [x] **FIX-DOC-3**: Web UI 壳层装配闭环文档自洽
   - **描述**: 统一 README.md、src/web-ui-shell/README.md 与 tests/e2e/*.spec.ts 中关于 Open WebUI 容器装配的描述，确保静态可验证的装配闭环证据存在
   - **输入**: 审查报告 §5.2 (High Issue #4)
   - **输出**: `README.md`, `src/web-ui-shell/README.md`
