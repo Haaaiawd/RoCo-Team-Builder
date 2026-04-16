@@ -87,3 +87,35 @@
   - 修改内容: 移除 recognition_tool.py 输出依赖，修改验收标准为 Agent 直接接收图片并识别，调整估时从 6h 至 4h
   - 影响范围: `.anws/v2/05_TASKS.md`
   - PRD 追溯: [REQ-002]
+
+## 2026-04-16 - 静态复核补充修复
+- [CHANGE] T4.1.2: 强化 BYOK 本地持久化验收标准
+  - 用户原话: "我先做一次'回归式静态复核'... BYOK 持久化看起来仍然没修好"
+  - 修改内容: 修改验收标准，明确 API Key 保存时代码中不得替换为 ***，确保真实保存到 localStorage
+  - 影响范围: `.anws/v2/05_TASKS.md`
+  - PRD 追溯: [REQ-006]
+- [CHANGE] T3.2.4: 补充截图识别闭环验收标准
+  - 用户原话: "我怀疑截图修复只完成了一半"
+  - 修改内容: 补充验收标准，明确要求前端确认 UI 和后端 owned_spirits 写回链路
+  - 影响范围: `.anws/v2/05_TASKS.md`
+  - PRD 追溯: [REQ-002]
+- [ADD] FIX-BYOK-PERSISTENCE: 修复 BYOK 本地持久化实现
+  - 用户原话: "BYOK 持久化看起来仍然没修好"
+  - 修改内容: 新增任务修复 config.ts 中将 api_key 替换为 *** 的逻辑，确保真实保存到 localStorage
+  - 影响范围: `.anws/v2/05_TASKS.md`, `src/web-ui-shell/settings/byok/config.ts`, `src/web-ui-shell/settings/byok/config.test.ts`
+  - PRD 追溯: [PRD §6.2]
+- [ADD] FIX-RECOGNITION-CLOSURE: 补充截图识别闭环实现
+  - 用户原话: "我怀疑截图修复只完成了一半"
+  - 修改内容: 新增任务实现前端识别结果确认 UI 和后端 owned_spirits 写回链路
+  - 影响范围: `.anws/v2/05_TASKS.md`, 前端确认 UI 组件、后端确认信号处理
+  - PRD 追溯: [REQ-002]
+- [ADD] FIX-SECURITY-NEGATIVE-TEST: 补充安全修复负向测试
+  - 用户原话: "安全修复是否有对应测试闭环"
+  - 修改内容: 新增任务添加测试验证缺失/错误 secret 必须 403
+  - 影响范围: `.anws/v2/05_TASKS.md`, `tests/integration/test_agent_backend_routes.py`
+  - PRD 追溯: [PRD §6.2]
+- [ADD] FIX-FRONTEND-CLOSURE: 补充前端装配闭环
+  - 用户原话: "前端装配闭环与 E2E 契约一致性"
+  - 修改内容: 新增任务修复 E2E 测试契约一致性，补充装配证据
+  - 影响范围: `.anws/v2/05_TASKS.md`, E2E 测试更新、装配文档补充
+  - PRD 追溯: [REQ-006]

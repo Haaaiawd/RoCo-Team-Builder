@@ -308,8 +308,8 @@ graph TD
     - When Agent 收到图片
     - Then 多模态 LLM 直接识别并输出结构化精灵名称列表 + 不确定项，并在对话中展示确认卡片等待用户确认
     - Given 用户确认精灵列表
-    - When 确认信号被接收
-    - Then `owned_spirits` 写入当前会话上下文，后续工具调用可读取
+    - When 前端发送确认信号到后端
+    - Then 后端调用 `set_owned_spirits` 写入当前会话上下文，后续工具调用可读取
     - Given `owned_spirits` 非空时 Agent 执行配队推理
     - When `recommend_team` 调用候选池
     - Then 候选只从 `owned_spirits` 内选取；若无法凑齐完整队伍，先向用户说明并询问是否放宽限制，而不是静默引入列表外精灵
@@ -401,7 +401,7 @@ graph TD
     - Then 能看到内置轨道与 BYOK 轨道的清晰差异提示
     - Given 用户输入 BYOK 配置
     - When 保存连接
-    - Then API Key 真实保存在 localStorage（不替换为 ***），刷新页面后可读取使用，不发送到服务端
+    - Then API Key 真实保存在 localStorage（代码中不得替换为 ***），刷新页面后可读取使用，不发送到服务端
     - Given 当前轨道不可用
     - When 用户发送消息
     - Then 不发生静默切轨，而是显示明确的下一步提示
@@ -720,6 +720,87 @@ graph TD
   - **估时**: 3h
   - **依赖**: 无
   - **优先级**: P0
+
+- [ ] **FIX-BYOK-PERSISTENCE** [PRD §6.2]: 修复 BYOK 本地持久化
+  - **描述**: 移除 config.ts 中将 api_key 替换为 `***` 的逻辑，确保真实保存到 localStorage
+  - **输入**: 审查报告 BYOK 持久化问题，`01_PRD.md` §6.2 安全与合规
+  - **输出**: `src/web-ui-shell/settings/byok/config.ts`, `src/web-ui-shell/settings/byok/config.test.ts`
+  - **📎 参考**: `01_PRD.md` §6.2，T4.1.2 验收标准
+  - **验收标准**:
+    - Given 用户输入 BYOK 配置
+    - When 保存连接
+    - Then API Key 真实保存到 localStorage（代码中不得替换为 ***）
+    - Given 刷新页面
+    - When 读取 BYOK 配置
+    - Then API Key 可正常读取使用，不为空字符串
+    - Given 单元测试验证保存逻辑
+    - When 保存 api_key
+    - Then 测试验证保存的是原始值，不是 `***`
+  - **验证类型**: 单元测试
+  - **验证说明**: 修改 config.ts 保存/加载逻辑，更新测试验证真实保存
+  - **估时**: 1h
+  - **依赖**: 无
+  - **优先级**: P0
+
+- [ ] **FIX-RECOGNITION-CLOSURE** [REQ-002]: 补充截图识别闭环
+  - **描述**: 实现前端识别结果确认 UI 和后端 owned_spirits 写回链路
+  - **输入**: 审查报告截图识别闭环问题，`01_PRD.md` US-002 AC-1
+  - **输出**: 前端确认 UI 组件、后端确认信号处理
+  - **📎 参考**: `01_PRD.md` US-002，T3.2.4 验收标准
+  - **验收标准**:
+    - Given 多模态 LLM 返回识别结果
+    - When 前端展示确认卡片
+    - Then 用户可点击确认/取消按钮
+    - Given 用户点击确认按钮
+    - When 前端发送确认信号到后端
+    - Then 后端调用 `set_owned_spirits` 写入会话上下文
+    - Given 用户点击取消按钮
+    - When 前端发送取消信号
+    - Then owned_spirits 保持不变
+  - **验证类型**: 集成测试
+  - **验证说明**: 实现前端确认 UI 和后端信号处理，编写集成测试验证完整链路
+  - **估时**: 4h
+  - **依赖**: T3.2.4
+  - **优先级**: P0
+
+- [ ] **FIX-SECURITY-NEGATIVE-TEST** [PRD §6.2]: 补充安全修复负向测试
+  - **描述**: 添加测试验证缺失/错误 secret 必须 403
+  - **输入**: 审查报告安全测试问题，`01_PRD.md` §6.2 安全与合规
+  - **输出**: `tests/integration/test_agent_backend_routes.py`
+  - **📎 参考**: FIX-SECURITY-1
+  - **验收标准**:
+    - Given 请求缺失 X-Roco-Internal-Secret 头部
+    - When 调用 /v1/models 或 /v1/chat/completions
+    - Then 返回 403 Forbidden
+    - Given 请求携带错误的 X-Roco-Internal-Secret
+    - When 调用受保护端点
+    - Then 返回 403 Forbidden
+    - Given 请求携带正确的 X-Roco-Internal-Secret
+    - When 调用受保护端点
+    - Then 正常处理请求
+  - **验证类型**: 集成测试
+  - **验证说明**: 在 test_agent_backend_routes.py 中添加负向测试用例
+  - **估时**: 1h
+  - **依赖**: FIX-SECURITY-1
+  - **优先级**: P1
+
+- [ ] **FIX-FRONTEND-CLOSURE** [REQ-006]: 补充前端装配闭环
+  - **描述**: 修复 E2E 测试契约一致性，补充装配证据
+  - **输入**: 审查报告前端装配闭环问题，`01_PRD.md` US-006
+  - **输出**: E2E 测试更新、装配文档补充
+  - **📎 参考**: FIX-DOC-3
+  - **验收标准**:
+    - Given E2E 测试引用 recognition-review 等标识
+    - When 检查前端源码
+    - Then 前端源码包含对应的实现或移除测试中的引用
+    - Given web-ui-shell README 声明装配步骤
+    - When 检查实际代码
+    - Then 代码中存在明确的装配入口或更新 README 说明实际装配方式
+  - **验证类型**: E2E 测试
+  - **验证说明**: 更新 E2E 测试与实际实现一致，或补充前端装配入口实现
+  - **估时**: 2h
+  - **依赖**: FIX-DOC-3
+  - **优先级**: P1
 
 - [x] **FIX-DOC-2**: 统一前端文档与测试契约
   - **描述**: 修改根 README.md 删除或降级前端测试命令，与 src/web-ui-shell/README.md 声明保持一致
