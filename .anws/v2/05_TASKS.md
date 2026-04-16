@@ -297,7 +297,7 @@ graph TD
   - **估时**: 7h
   - **依赖**: T1.2.1, T1.2.2, T3.1.2
   - **优先级**: P0
-- [ ] **T3.2.4** [REQ-002]: 实现截图识别确认流与 owned_spirits 会话约束
+- [x] **T3.2.4** [REQ-002]: 实现截图识别确认流与 owned_spirits 会话约束
   - **描述**: 在 Agent 收到图片后，多模态 LLM 直接识别精灵名称列表并输出结构化结果；用户确认后，将 `owned_spirits` 列表持久化到当前会话上下文；后续推理工具链在 `owned_spirits` 非空时，仅从该列表内推荐精灵，若确需列表外精灵，须先向用户询问
   - **⚠️ 注意**: 移除 `recognize_spirit_list` 工具，由多模态 LLM 直接处理图像并输出结构化结果（精灵名称列表 + 不确定项）
   - **输入**: `01_PRD.md` US-002 AC-1（识别清单确认）、AC-3（推荐不超出列表）；`02_ARCHITECTURE_OVERVIEW.md` §3.5 错误矩阵；`04_SYSTEM_DESIGN/agent-backend-system.md` §5.1 `run_agent_turn`、§6 数据模型；`03_ADR/ADR_003_SESSION_MANAGEMENT.md`（会话边界不新增并行状态源）；T3.1.2 产出的会话仓库、T3.2.1 产出的请求归一化器、T3.2.3 产出的配队工具链
@@ -703,7 +703,7 @@ graph TD
   - **依赖**: 无
   - **优先级**: P2
 
-- [ ] **FIX-SECURITY-1** [PRD §6.2]: 修复后端信任边界
+- [x] **FIX-SECURITY-1** [PRD §6.2]: 修复后端信任边界
   - **描述**: 修改 docker-compose.yml 取消对宿主机公开 8000 端口，后端仅接受来自可信代理（Web UI 容器）的请求，或添加令牌校验；防止伪造 X-OpenWebUI-User-Id/X-OpenWebUI-Chat-Id 头部访问他人会话
   - **输入**: 审查报告 §5.2 (High Issue #2)，`01_PRD.md` §6.2 安全与合规
   - **输出**: `docker-compose.yml`, `src/agent_backend/api/routes_openai.py`
