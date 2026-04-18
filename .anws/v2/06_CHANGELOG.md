@@ -143,3 +143,25 @@
   - 修改内容: 新增任务扩展负向测试覆盖所有受保护端点（/v1/chat/completions, /v1/recognition/confirm）
   - 影响范围: `.anws/v2/05_TASKS.md`, `tests/integration/test_agent_backend_routes.py`
   - PRD 追溯: [PRD §6.2]
+
+## 2026-04-18 - 配队系统集成
+- [REMOVE] RESTORE-RECOGNITION-TOOL: 移除错误任务
+  - 用户原话: "这个识别，我们用多模态不行吗，原来的这个ui是怎么做的？嗯？"
+  - 修改内容: 移除错误的 RESTORE-RECOGNITION-TOOL 任务，设计已决定使用多模态 LLM 直接处理图像，不需要恢复 recognition_tool
+  - 影响范围: `.anws/v2/05_TASKS.md`
+  - PRD 追溯: [REQ-002]
+- [ADD] ENHANCE-DATA-LAYER-TEAM-ANALYSIS: 补充队伍级抗性弱点分析
+  - 用户原话: "先去看这个，特别是里面有关于配对后队伍的抗性，克制等机制的信息，可以融入我们的项目里进去"
+  - 修改内容: 参考 rocom.aoe.top 实现，新增队伍级抗性弱点分析功能，包含净克制值计算和 Top 5 抗性/弱点统计
+  - 影响范围: `.anws/v2/05_TASKS.md`, `src/data_layer/app/facade.py`, `src/data_layer/wiki/gateway.py`
+  - PRD 追溯: [REQ-001]
+- [ADD] ENHANCE-AGENT-TEAM-OUTPUT: 扩展 Agent 输出包含队伍分析
+  - 用户原话: "对吧，我们其实最重要的也就是队伍级别的汇总，其实。这些都需要补充和使用进去。然后我们Agent是可以直接生成一套配队，配好技能和精灵，给用户引导到我们的配队页面。也就是集成在一起如何"
+  - 修改内容: 扩展 Agent 配队工具链输出，包含队伍分析结果（抗性/弱点/亮点）和可序列化配置（share_url）
+  - 影响范围: `.anws/v2/05_TASKS.md`, `src/agent_backend/runtime/team_builder_tools.py`, `src/agent_backend/runtime/agent_factory.py`
+  - PRD 追溯: [REQ-001]
+- [ADD] IMPLEMENT-FRONTEND-TEAM-BUILDER: 实现前端配队页面（侧边栏入口）
+  - 用户原话: "直接把这个配队这个系统塞进我们的系统里面吧。侧边栏找个位置放，大概是，如何呢。一起完成，移除和执行补充"
+  - 修改内容: 参考 rocom.aoe.top 的 team.vue 实现，在 web-ui-shell 中实现配队页面，侧边栏添加"配队工具"入口，展示队伍抗性/弱点 Top 5、攻击覆盖、阵容亮点
+  - 影响范围: `.anws/v2/05_TASKS.md`, `src/web-ui-shell/routes/team-builder/index.tsx`, `src/web-ui-shell/layout/sidebar.tsx`, `src/web-ui-shell/components/team-analysis/`
+  - PRD 追溯: [REQ-006]

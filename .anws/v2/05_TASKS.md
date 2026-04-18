@@ -806,24 +806,6 @@ graph TD
   - **依赖**: FIX-DOC-3
   - **优先级**: P1
 
-- [ ] **RESTORE-RECOGNITION-TOOL** [REQ-002]: 恢复识别工具实现
-  - **描述**: 恢复或重新实现 recognition_tool.py 及其在 Agent Factory 中的注册
-  - **输入**: 复核反馈识别 Blocker，`01_PRD.md` US-002，T3.2.4 当前验收标准
-  - **输出**: `src/agent_backend/runtime/recognition_tool.py`，`src/agent_backend/runtime/agent_factory.py`（注册工具）
-  - **📎 参考**: T3.2.4，FIX-RECOGNITION-CLOSURE
-  - **验收标准**:
-    - Given runtime 目录包含 recognition_tool.py 源文件
-    - When Agent Factory 初始化工具注册
-    - Then recognition_tool 被正确注册到工具注册表
-    - Given 用户上传截图
-    - When Agent 调用识别工具
-    - Then 返回结构化精灵名称列表
-  - **验证类型**: 集成测试
-  - **验证说明**: 实现识别工具并验证注册到 Agent Factory，编写集成测试验证识别功能
-  - **估时**: 4h
-  - **依赖**: T3.2.4
-  - **优先级**: P0
-
 - [ ] **IMPLEMENT-FRONTEND-CORE** [REQ-006]: 实现前端核心组件
   - **描述**: 实现主聊天界面、精灵卡片、工具结果展示等核心组件以满足 E2E 测试契约
   - **输入**: 复核反馈前端闭环问题，`01_PRD.md` US-006，T4.2.1 当前验收标准，E2E 测试引用的标识符
@@ -867,6 +849,66 @@ graph TD
   - **估时**: 1h
   - **依赖**: FIX-SECURITY-NEGATIVE-TEST
   - **优先级**: P1
+
+- [ ] **ENHANCE-DATA-LAYER-TEAM-ANALYSIS** [REQ-001]: 补充队伍级抗性弱点分析
+  - **描述**: 参考 rocom.aoe.top 实现，补充队伍级抗性弱点分析功能。在 data-layer-system 中添加 `analyze_team_defense(team_spirits)` 方法，返回队伍对每个攻击类型的抗性/弱点数量统计、Top 5 抗性/弱点列表。实现 `calculate_defense_net(spirit, attack_type)` 计算单个精灵对特定攻击类型的净克制值（考虑主副属性）。
+  - **输入**: rocom.aoe.top 参考项目 team.vue 抗性克制逻辑，`01_PRD.md` US-001
+  - **输出**: `src/data_layer/app/facade.py`（新增队伍分析方法），`src/data_layer/wiki/gateway.py`（扩展类型克制查询）
+  - **📎 参考**: T1.2.2
+  - **验收标准**:
+    - Given 6 只精灵组成的队伍
+    - When 调用 analyze_team_defense
+    - Then 返回队伍抗性/弱点统计，包含 Top 5 抗性和弱点
+    - Given 单个精灵的主属性为火，副属性为草
+    - When 计算对水系攻击的净克制值
+    - Then 返回正确累加值（火弱水+1，草抗水-1，净值为0）
+  - **验证类型**: 单元测试
+  - **验证说明**: 为队伍分析方法编写单元测试，验证净克制值计算和 Top 5 排序
+  - **估时**: 6h
+  - **依赖**: T1.2.2
+  - **优先级**: P0
+
+- [ ] **ENHANCE-AGENT-TEAM-OUTPUT** [REQ-001]: 扩展 Agent 输出包含队伍分析
+  - **描述**: 扩展 Agent 配队工具链输出，包含队伍分析结果和可序列化配置。在 team_builder_tools.py 中扩展 recommend_team 输出格式，新增 team_analysis 字段（抗性/弱点/亮点），新增 share_url 字段（可序列化为前端配队页面加载的配置）。
+  - **输入**: rocom.aoe.top 参考项目 team.vue 阵容分析逻辑，`01_PRD.md` US-001，ENHANCE-DATA-LAYER-TEAM-ANALYSIS 产出的队伍分析方法
+  - **输出**: `src/agent_backend/runtime/team_builder_tools.py`（扩展输出格式），`src/agent_backend/runtime/agent_factory.py`（集成队伍分析）
+  - **📎 参考**: T3.2.3, ENHANCE-DATA-LAYER-TEAM-ANALYSIS
+  - **验收标准**:
+    - Given Agent 推荐完整队伍
+    - When 输出配队结果
+    - Then 包含 spirits、moves、team_analysis（resistances/weaknesses/highlights）、share_url
+    - Given team_analysis.weaknesses 中某系数量 >= 3
+    - When 生成 highlights
+    - Then 包含"全队对 X 系承压较大，建议补抗性位"提示
+    - Given share_url 格式
+    - When 前端解析
+    - Then 可还原为配队页面可加载的配置对象
+  - **验证类型**: 集成测试
+  - **验证说明**: 编写 Agent 集成测试，验证输出格式包含完整队伍分析和可序列化配置
+  - **估时**: 4h
+  - **依赖**: T3.2.3, ENHANCE-DATA-LAYER-TEAM-ANALYSIS
+  - **优先级**: P0
+
+- [ ] **IMPLEMENT-FRONTEND-TEAM-BUILDER** [REQ-006]: 实现前端配队页面（侧边栏入口）
+  - **描述**: 参考 rocom.aoe.top 的 team.vue 实现，在 web-ui-shell 中实现配队页面。侧边栏添加"配队工具"入口，页面展示队伍抗性/弱点 Top 5、攻击覆盖范围、阵容分析亮点。支持从 Agent 输出的 share_url 直接加载配置，支持手动调整精灵和技能。
+  - **输入**: rocom.aoe.top 参考项目 team.vue 完整实现，`01_PRD.md` US-006，ENHANCE-AGENT-TEAM-OUTPUT 产出的 share_url 格式
+  - **输出**: `src/web-ui-shell/routes/team-builder/index.tsx`（配队页面），`src/web-ui-shell/layout/sidebar.tsx`（侧边栏入口），`src/web-ui-shell/components/team-analysis/`（抗性弱点分析组件）
+  - **📎 参考**: T4.1.1, ENHANCE-AGENT-TEAM-OUTPUT
+  - **验收标准**:
+    - Given 用户点击侧边栏"配队工具"
+    - When 页面加载
+    - Then 展示 6 个槽位、精灵选择器、技能选择器
+    - Given 队伍配置完成
+    - When 查看分析面板
+    - Then 显示抗性 Top 5、弱点 Top 5、攻击覆盖、阵容亮点
+    - Given Agent 输出包含 share_url
+    - When 用户点击"在配队工具中查看"
+    - Then 配队页面自动加载该配置
+  - **验证类型**: E2E 测试
+  - **验证说明**: 编写 E2E 测试验证配队页面功能和 Agent 输出加载
+  - **估时**: 12h
+  - **依赖**: T4.1.1, ENHANCE-AGENT-TEAM-OUTPUT
+  - **优先级**: P0
 
 - [x] **FIX-DOC-2**: 统一前端文档与测试契约
   - **描述**: 修改根 README.md 删除或降级前端测试命令，与 src/web-ui-shell/README.md 声明保持一致
