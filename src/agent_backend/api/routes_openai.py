@@ -230,6 +230,66 @@ def encode_mid_stream_error_init(message: str) -> str:
 
 
 # ---------------------------------------------------------------------------
+# POST /v1/recognition/confirm
+# ---------------------------------------------------------------------------
+
+
+@router.post("/v1/recognition/confirm")
+async def recognition_confirm(request: Request):
+    """接收前端截图识别确认信号，写入 owned_spirits 到会话上下文。
+
+    验收标准: FIX-RECOGNITION-CLOSURE
+    - 请求体: { "spirits": ["精灵A", "精灵B"] }
+    - 通过请求头 X-OpenWebUI-User-Id 和 X-OpenWebUI-Chat-Id 传递会话键
+    - 调用 session_service.set_owned_spirits(session_key, spirits) 写入会话上下文
+    """
+    _verify_internal_secret(dict(request.headers))
+
+    # 1. 解析 JSON body
+    try:
+        payload = await request.json()
+    except Exception:
+        return validation_error("请求体必须是合法 JSON", param="body").to_response()
+
+    # 2. 验证请求体格式
+    spirits = payload.get("spirits")
+    if not isinstance(spirits, list) or not all(isinstance(s, str) for s in spirits):
+        return validation_error(
+            "请求体必须包含 spirits 字段（字符串数组）",
+            param="spirits"
+        ).to_response()
+
+    # 3. 解析会话键
+    try:
+        from ..app.session_service import resolve_session_key, SessionIdentityError
+        session_key = resolve_session_key(dict(request.headers))
+    except SessionIdentityError as exc:
+        return JSONResponse(
+            status_code=400,
+            content={"error": {"message": exc.message, "type": exc.error_code}},
+        )
+
+    # 4. 获取或创建会话
+    if _session_registry is None:
+        return JSONResponse(
+            status_code=503,
+            content={"error": {"message": "Session registry not initialized", "type": "internal_error"}},
+        )
+    session = _session_registry.get_or_create(session_key)
+
+    # 5. 写入 owned_spirits
+    if hasattr(session, "set_owned_spirits"):
+        session.set_owned_spirits(spirits)
+    else:
+        return JSONResponse(
+            status_code=503,
+            content={"error": {"message": "Session does not support owned_spirits", "type": "internal_error"}},
+        )
+
+    return {"status": "ok", "spirits_count": len(spirits)}
+
+
+# ---------------------------------------------------------------------------
 # Health & Readiness
 # ---------------------------------------------------------------------------
 
