@@ -65,6 +65,34 @@ class TestListModels:
         assert len(data["data"]) >= 1
 
     @pytest.mark.asyncio
+    async def test_missing_secret_returns_403(self, client: AsyncClient):
+        """缺失 X-Roco-Internal-Secret 头部时返回 403。"""
+        from httpx import ASGITransport, AsyncClient
+        from agent_backend.main import app
+
+        transport = ASGITransport(app=app)
+        async with AsyncClient(transport=transport, base_url="http://test") as c:
+            resp = await c.get("/v1/models")
+            assert resp.status_code == 403
+            assert "Unauthorized" in resp.json()["detail"]
+
+    @pytest.mark.asyncio
+    async def test_wrong_secret_returns_403(self, client: AsyncClient):
+        """错误的 X-Roco-Internal-Secret 头部时返回 403。"""
+        from httpx import ASGITransport, AsyncClient
+        from agent_backend.main import app
+
+        transport = ASGITransport(app=app)
+        async with AsyncClient(
+            transport=transport,
+            base_url="http://test",
+            headers={"X-Roco-Internal-Secret": "wrong-secret"}
+        ) as c:
+            resp = await c.get("/v1/models")
+            assert resp.status_code == 403
+            assert "Unauthorized" in resp.json()["detail"]
+
+    @pytest.mark.asyncio
     async def test_model_entry_shape(self, client: AsyncClient):
         """模型条目包含必要字段。"""
         resp = await client.get("/v1/models")
