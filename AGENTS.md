@@ -123,6 +123,9 @@
 ### 🌊 Wave 3 — 架构审查报告修复（COMPLETED）
 `T3.2.4` ✅, `FIX-SECURITY-1` ✅, `FIX-DOC-2` ✅, `FIX-LOG-1` ✅, `FIX-DOC-3` ✅
 
+### 🌊 Wave 4A — 静态复核补充修复（COMPLETED）
+`FIX-BYOK-PERSISTENCE` ✅, `FIX-RECOGNITION-CLOSURE` ✅
+
 ---
 
 ## 🌳 项目结构 (Project Tree)

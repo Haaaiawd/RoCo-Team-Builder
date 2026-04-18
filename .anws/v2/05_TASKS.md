@@ -742,7 +742,7 @@ graph TD
   - **依赖**: 无
   - **优先级**: P0
 
-- [ ] **FIX-RECOGNITION-CLOSURE** [REQ-002]: 补充截图识别闭环
+- [x] **FIX-RECOGNITION-CLOSURE** [REQ-002]: 补充截图识别闭环
   - **描述**: 实现前端识别结果确认 UI 和后端 owned_spirits 写回链路。前端在 `src/web-ui-shell/chat/timeline/recognition-confirm.tsx` 创建确认卡片组件，包含 `[data-testid="recognition-review"]`、`[data-testid="recognition-candidate"]`、`[data-testid="confirm-owned-list"]` 等标识符。后端在 `src/agent_backend/api/routes_openai.py` 添加 POST `/v1/recognition/confirm` 端点接收确认信号，通过请求头 `X-OpenWebUI-User-Id` 和 `X-OpenWebUI-Chat-Id` 传递会话键，调用 `session_service.set_owned_spirits(session_key, spirits)` 写入会话上下文。
   - **输入**: 审查报告截图识别闭环问题，`01_PRD.md` US-002 AC-1
   - **输出**: `src/web-ui-shell/chat/timeline/recognition-confirm.tsx`, `src/agent_backend/api/routes_openai.py`
