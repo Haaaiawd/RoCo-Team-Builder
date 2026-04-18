@@ -29,16 +29,34 @@ web-ui:
 
 ```
 src/web-ui-shell/
+├── chat/
+│   ├── timeline/
+│   │   └── recognition-confirm.tsx  # 截图识别确认组件（已实现）
+│   ├── attachments/                 # 附件上传（待实现）
+│   ├── composer/                    # 消息输入区（待实现）
+│   └── tool-result/                 # 工具结果展示（待实现）
 ├── guards/
 │   └── feature-whitelist/
 │       ├── policy.ts              # 可见功能白名单策略（真理源）
 │       └── policy.test.ts         # 策略单元测试
 ├── regression/
 │   └── visible-feature-snapshot.ts  # UI 回归测试快照导出
+├── settings/
+│   └── byok/
+│       ├── config.ts              # BYOK 配置（已实现）
+│       └── config.test.ts         # BYOK 配置测试（已实现）
 └── shell/
     └── layout/
         └── theme-config.ts        # 复古冒险者手账风主题配置
 ```
+
+**当前实现状态**：
+- ✅ 截图识别确认组件 (`recognition-confirm.tsx`) - 包含 recognition-review, recognition-candidate, confirm-owned-list, owned-list-status 标识符
+- ✅ BYOK 配置管理 (`config.ts`) - API Key 本地持久化
+- ⏳ 主聊天界面组件（待实现）- model-selector, chat-input, send-button 等
+- ⏳ 精灵卡片组件（待实现）- spirit-card, data-source-link 等
+- ⏳ 工具结果展示（待实现）- tool-card 等
+- ⏳ 侧栏导航（待实现）- sidebar-item, 各入口项等
 
 ## 核心功能
 
