@@ -806,6 +806,68 @@ graph TD
   - **依赖**: FIX-DOC-3
   - **优先级**: P1
 
+- [ ] **RESTORE-RECOGNITION-TOOL** [REQ-002]: 恢复识别工具实现
+  - **描述**: 恢复或重新实现 recognition_tool.py 及其在 Agent Factory 中的注册
+  - **输入**: 复核反馈识别 Blocker，`01_PRD.md` US-002，T3.2.4 当前验收标准
+  - **输出**: `src/agent_backend/runtime/recognition_tool.py`，`src/agent_backend/runtime/agent_factory.py`（注册工具）
+  - **📎 参考**: T3.2.4，FIX-RECOGNITION-CLOSURE
+  - **验收标准**:
+    - Given runtime 目录包含 recognition_tool.py 源文件
+    - When Agent Factory 初始化工具注册
+    - Then recognition_tool 被正确注册到工具注册表
+    - Given 用户上传截图
+    - When Agent 调用识别工具
+    - Then 返回结构化精灵名称列表
+  - **验证类型**: 集成测试
+  - **验证说明**: 实现识别工具并验证注册到 Agent Factory，编写集成测试验证识别功能
+  - **估时**: 4h
+  - **依赖**: T3.2.4
+  - **优先级**: P0
+
+- [ ] **IMPLEMENT-FRONTEND-CORE** [REQ-006]: 实现前端核心组件
+  - **描述**: 实现主聊天界面、精灵卡片、工具结果展示等核心组件以满足 E2E 测试契约
+  - **输入**: 复核反馈前端闭环问题，`01_PRD.md` US-006，T4.2.1 当前验收标准，E2E 测试引用的标识符
+  - **输出**:
+    - `src/web-ui-shell/chat/composer/chat-input.tsx`（包含 data-testid="chat-input"）
+    - `src/web-ui-shell/chat/composer/send-button.tsx`（包含 data-testid="send-button"）
+    - `src/web-ui-shell/chat/composer/model-selector.tsx`（包含 data-testid="model-selector"）
+    - `src/web-ui-shell/chat/timeline/spirit-card.tsx`（包含 data-testid="spirit-card"）
+    - `src/web-ui-shell/chat/timeline/tool-card.tsx`（包含 data-testid="tool-card"）
+  - **📎 参考**: T4.2.1，FIX-FRONTEND-CLOSURE
+  - **验收标准**:
+    - Given E2E 测试引用 model-selector, chat-input, send-button
+    - When 检查前端源码
+    - Then 前端源码包含对应的实现组件
+    - Given E2E 测试引用 spirit-card, tool-card
+    - When 检查前端源码
+    - Then 前端源码包含对应的实现组件
+  - **验证类型**: E2E 测试
+  - **验证说明**: 实现核心组件并验证 E2E 测试可通过
+  - **估时**: 8h
+  - **依赖**: T4.2.1
+  - **优先级**: P0
+
+- [ ] **EXPAND-SECURITY-TESTS** [PRD §6.2]: 扩展安全负向测试
+  - **描述**: 扩展负向测试覆盖所有受保护端点（/v1/chat/completions, /v1/recognition/confirm）
+  - **输入**: 复核反馈安全测试覆盖不全，FIX-SECURITY-NEGATIVE-TEST 当前验收标准
+  - **输出**: `tests/integration/test_agent_backend_routes.py`（扩展测试用例）
+  - **📎 参考**: FIX-SECURITY-NEGATIVE-TEST，FIX-SECURITY-1
+  - **验收标准**:
+    - Given 请求缺失 X-Roco-Internal-Secret 头部
+    - When 调用 /v1/chat/completions
+    - Then 返回 403 Forbidden
+    - Given 请求缺失 X-Roco-Internal-Secret 头部
+    - When 调用 /v1/recognition/confirm
+    - Then 返回 403 Forbidden
+    - Given 请求携带错误的 X-Roco-Internal-Secret
+    - When 调用 /v1/chat/completions 和 /v1/recognition/confirm
+    - Then 返回 403 Forbidden
+  - **验证类型**: 集成测试
+  - **验证说明**: 扩展 test_agent_backend_routes.py 覆盖所有受保护端点
+  - **估时**: 1h
+  - **依赖**: FIX-SECURITY-NEGATIVE-TEST
+  - **优先级**: P1
+
 - [x] **FIX-DOC-2**: 统一前端文档与测试契约
   - **描述**: 修改根 README.md 删除或降级前端测试命令，与 src/web-ui-shell/README.md 声明保持一致
   - **输入**: 审查报告 §5.2 (Medium Issue #5)

@@ -126,3 +126,20 @@
   - 修改内容: 补充任务描述，明确前端组件位置 `src/web-ui-shell/chat/timeline/recognition-confirm.tsx`，后端端点 POST `/v1/recognition/confirm`，确认信号格式和 data-testid 标识符
   - 影响范围: `.anws/v2/05_TASKS.md`
   - PRD 追溯: [REQ-002]
+
+## 2026-04-18 - 复核反馈补充修复
+- [ADD] RESTORE-RECOGNITION-TOOL: 恢复识别工具实现
+  - 用户原话: "截图识别仍是骨架实现... recognition_tool.py 源文件已删除，只剩缓存文件"
+  - 修改内容: 新增任务恢复或重新实现 recognition_tool.py 及其在 Agent Factory 中的注册
+  - 影响范围: `.anws/v2/05_TASKS.md`, `src/agent_backend/runtime/recognition_tool.py`, `src/agent_backend/runtime/agent_factory.py`
+  - PRD 追溯: [REQ-002]
+- [ADD] IMPLEMENT-FRONTEND-CORE: 实现前端核心组件
+  - 用户原话: "Web UI 装配闭环部分解决... 很多主路径组件仍是待实现"
+  - 修改内容: 新增任务实现主聊天界面、精灵卡片、工具结果展示等核心组件以满足 E2E 测试契约
+  - 影响范围: `.anws/v2/05_TASKS.md`, `src/web-ui-shell/chat/composer/*`, `src/web-ui-shell/chat/timeline/*`
+  - PRD 追溯: [REQ-006]
+- [ADD] EXPAND-SECURITY-TESTS: 扩展安全负向测试
+  - 用户原话: "负向测试只覆盖 /v1/models，未覆盖其他端点"
+  - 修改内容: 新增任务扩展负向测试覆盖所有受保护端点（/v1/chat/completions, /v1/recognition/confirm）
+  - 影响范围: `.anws/v2/05_TASKS.md`, `tests/integration/test_agent_backend_routes.py`
+  - PRD 追溯: [PRD §6.2]
