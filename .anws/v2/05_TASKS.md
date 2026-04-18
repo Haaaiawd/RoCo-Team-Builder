@@ -743,20 +743,24 @@ graph TD
   - **优先级**: P0
 
 - [ ] **FIX-RECOGNITION-CLOSURE** [REQ-002]: 补充截图识别闭环
-  - **描述**: 实现前端识别结果确认 UI 和后端 owned_spirits 写回链路
+  - **描述**: 实现前端识别结果确认 UI 和后端 owned_spirits 写回链路。前端在 `src/web-ui-shell/chat/timeline/recognition-confirm.tsx` 创建确认卡片组件，包含 `[data-testid="recognition-review"]`、`[data-testid="recognition-candidate"]`、`[data-testid="confirm-owned-list"]` 等标识符。后端在 `src/agent_backend/api/routes_openai.py` 添加 POST `/v1/recognition/confirm` 端点接收确认信号，通过请求头 `X-OpenWebUI-User-Id` 和 `X-OpenWebUI-Chat-Id` 传递会话键，调用 `session_service.set_owned_spirits(session_key, spirits)` 写入会话上下文。
   - **输入**: 审查报告截图识别闭环问题，`01_PRD.md` US-002 AC-1
-  - **输出**: 前端确认 UI 组件、后端确认信号处理
+  - **输出**: `src/web-ui-shell/chat/timeline/recognition-confirm.tsx`, `src/agent_backend/api/routes_openai.py`
   - **📎 参考**: `01_PRD.md` US-002，T3.2.4 验收标准
   - **验收标准**:
     - Given 多模态 LLM 返回识别结果
     - When 前端展示确认卡片
-    - Then 用户可点击确认/取消按钮
+    - Then 包含 `[data-testid="recognition-review"]` 容器和 `[data-testid="recognition-candidate"]` 候选列表项
+    - Then 用户可点击 `[data-testid="confirm-owned-list"]` 确认按钮或取消按钮
     - Given 用户点击确认按钮
-    - When 前端发送确认信号到后端
-    - Then 后端调用 `set_owned_spirits` 写入会话上下文
+    - When 前端发送 POST `/v1/recognition/confirm` 请求体 `{ "spirits": ["精灵A", "精灵B"] }`
+    - Then 后端调用 `set_owned_spirits(session_key, spirits)` 写入会话上下文
     - Given 用户点击取消按钮
     - When 前端发送取消信号
     - Then owned_spirits 保持不变
+    - Given 确认成功
+    - When 界面显示状态提示
+    - Then 包含 `[data-testid="owned-list-status"]` 显示"基于已确认拥有列表"
   - **验证类型**: 集成测试
   - **验证说明**: 实现前端确认 UI 和后端信号处理，编写集成测试验证完整链路
   - **估时**: 4h

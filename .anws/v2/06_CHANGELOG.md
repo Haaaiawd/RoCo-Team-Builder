@@ -119,3 +119,10 @@
   - 修改内容: 新增任务修复 E2E 测试契约一致性，补充装配证据
   - 影响范围: `.anws/v2/05_TASKS.md`, E2E 测试更新、装配文档补充
   - PRD 追溯: [REQ-006]
+
+## 2026-04-18 - FIX-RECOGNITION-CLOSURE 设计细节补充
+- [CHANGE] FIX-RECOGNITION-CLOSURE: 补充前端 UI 组件位置和后端 API 端点
+  - 用户原话: 确认变更计划
+  - 修改内容: 补充任务描述，明确前端组件位置 `src/web-ui-shell/chat/timeline/recognition-confirm.tsx`，后端端点 POST `/v1/recognition/confirm`，确认信号格式和 data-testid 标识符
+  - 影响范围: `.anws/v2/05_TASKS.md`
+  - PRD 追溯: [REQ-002]
