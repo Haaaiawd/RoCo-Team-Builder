@@ -767,7 +767,7 @@ graph TD
   - **依赖**: T3.2.4
   - **优先级**: P0
 
-- [ ] **FIX-SECURITY-NEGATIVE-TEST** [PRD §6.2]: 补充安全修复负向测试
+- [x] **FIX-SECURITY-NEGATIVE-TEST** [PRD §6.2]: 补充安全修复负向测试
   - **描述**: 添加测试验证缺失/错误 secret 必须 403
   - **输入**: 审查报告安全测试问题，`01_PRD.md` §6.2 安全与合规
   - **输出**: `tests/integration/test_agent_backend_routes.py`
@@ -788,7 +788,7 @@ graph TD
   - **依赖**: FIX-SECURITY-1
   - **优先级**: P1
 
-- [ ] **FIX-FRONTEND-CLOSURE** [REQ-006]: 补充前端装配闭环
+- [x] **FIX-FRONTEND-CLOSURE** [REQ-006]: 补充前端装配闭环
   - **描述**: 修复 E2E 测试契约一致性，补充装配证据
   - **输入**: 审查报告前端装配闭环问题，`01_PRD.md` US-006
   - **输出**: E2E 测试更新、装配文档补充

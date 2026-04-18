@@ -126,6 +126,9 @@
 ### 🌊 Wave 4A — 静态复核补充修复（COMPLETED）
 `FIX-BYOK-PERSISTENCE` ✅, `FIX-RECOGNITION-CLOSURE` ✅
 
+### 🌊 Wave 4B — 静态复核补充修复（COMPLETED）
+`FIX-SECURITY-NEGATIVE-TEST` ✅, `FIX-FRONTEND-CLOSURE` ✅
+
 ---
 
 ## 🌳 项目结构 (Project Tree)
