@@ -165,3 +165,15 @@
   - 修改内容: 参考 rocom.aoe.top 的 team.vue 实现，在 web-ui-shell 中实现配队页面，侧边栏添加"配队工具"入口，展示队伍抗性/弱点 Top 5、攻击覆盖、阵容亮点
   - 影响范围: `.anws/v2/05_TASKS.md`, `src/web-ui-shell/routes/team-builder/index.tsx`, `src/web-ui-shell/layout/sidebar.tsx`, `src/web-ui-shell/components/team-analysis/`
   - PRD 追溯: [REQ-006]
+
+## 2026-04-18 - v2 收口并上升到下一版 /genesis
+- [REMOVE] ENHANCE-DATA-LAYER-TEAM-ANALYSIS / ENHANCE-AGENT-TEAM-OUTPUT / IMPLEMENT-FRONTEND-TEAM-BUILDER: 从 v2 移出
+  - 用户原话: "其实这可能属于较大的变动，或许我们应该先genesis，处理，将这个整个圆一下会不会好些？"
+  - 修改内容: 将配队系统整体集成从当前 v2 `/change` 范围撤回，避免在既有版本中引入跨系统架构升级；后续转由下一版 `/genesis` 统一承接
+  - 影响范围: `.anws/v2/05_TASKS.md`
+  - PRD 追溯: [REQ-001], [REQ-006]
+- [CHANGE] 下一版 /genesis 候选范围: 配队系统 + Wiki 联动
+  - 用户原话: "而且说不定还可以做个连接跳转百科的，或是直接来自抓取wiki的数据，或是直接跳转到wiki。"
+  - 修改内容: 记录下一版 genesis 需要统一评估的能力范围，包括配队工作台、Agent→配队页承接闭环、队伍级抗性/弱点/覆盖分析，以及百科/Wiki 跳转、直连抓取数据或 Hybrid 方案
+  - 影响范围: 下一版 `.anws/v{N+1}/01_PRD.md`, `.anws/v{N+1}/02_ARCHITECTURE_OVERVIEW.md`, `.anws/v{N+1}/03_ADR/*`
+  - PRD 追溯: 待下一版定义
