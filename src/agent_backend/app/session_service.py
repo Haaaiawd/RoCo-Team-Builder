@@ -5,6 +5,8 @@
      agent-backend-system.detail.md §1 SESSION_POLICY, §2 SessionRecord
      agent-backend-system.detail.md §3.1 resolve_session_key
      agent-backend-system.detail.md §3.6 evict_idle_sessions
+     agent-backend-system.detail.md §3.8 store_confirmed_owned_list
+     agent-backend-system.detail.md §3.9 apply_owned_list_constraint
      ADR-003: 内存 Session + 单进程 + user_id:chat_id
 
 不允许回退到仅 user_id 或随机 key。
@@ -143,3 +145,78 @@ class SessionRegistry:
     @property
     def all_keys(self) -> list[str]:
         return list(self._sessions.keys())
+
+    def store_confirmed_owned_list(self, session_key: str, spirit_ids: list[str]) -> None:
+        """存储用户确认拥有的精灵列表。
+
+        对齐: agent-backend-system.detail.md §3.8
+
+        Args:
+            session_key: 会话键 "user_id:chat_id"
+            spirit_ids: 已确认的精灵 ID 列表
+        """
+        record = self.get_or_create(session_key)
+        if hasattr(record, "set_owned_spirits"):
+            record.set_owned_spirits(spirit_ids)
+        else:
+            from .session_extensions import SessionRecordExtended
+
+            # 升级为扩展记录
+            extended = SessionRecordExtended(
+                session_key=record.session_key,
+                items=record.items,
+                last_access_at=record.last_access_at,
+                lock=record.lock,
+                owned_spirits=spirit_ids,
+            )
+            self._sessions[session_key] = extended
+
+    def get_confirmed_owned_list(self, session_key: str) -> list[str]:
+        """获取用户确认拥有的精灵列表。
+
+        Args:
+            session_key: 会话键 "user_id:chat_id"
+
+        Returns:
+            精灵 ID 列表，若未设置则返回空列表
+        """
+        record = self.get(session_key)
+        if record is None:
+            return []
+        if hasattr(record, "get_owned_spirits"):
+            return record.get_owned_spirits()
+        return []
+
+    def apply_owned_list_constraint(
+        self, session_key: str, candidate_spirits: list[str], user_intent: str | None = None
+    ) -> tuple[list[str], bool]:
+        """应用拥有列表约束。
+
+        对齐: agent-backend-system.detail.md §3.9
+
+        Args:
+            session_key: 会话键 "user_id:chat_id"
+            candidate_spirits: 候选精灵列表
+            user_intent: 用户意图摘要（用于判断是否 override）
+
+        Returns:
+            (约束后的精灵列表, 是否应用了约束)
+        """
+        owned = self.get_confirmed_owned_list(session_key)
+
+        # 如果未设置拥有列表，不应用约束
+        if not owned:
+            return candidate_spirits, False
+
+        # 如果用户明确要求 override（例如"忽略我的拥有列表"），则不应用约束
+        # 这里简化处理：如果 user_intent 包含特定关键词则跳过约束
+        if user_intent and any(
+            keyword in user_intent.lower() for keyword in ["忽略", "override", "不考虑", "不管"]
+        ):
+            return candidate_spirits, False
+
+        # 应用约束：只推荐已拥有的精灵
+        constrained = [s for s in candidate_spirits if s in owned]
+        is_constrained = len(constrained) < len(candidate_spirits)
+
+        return constrained, is_constrained

@@ -189,7 +189,7 @@ graph TD
 
 ### Phase 1: Core Components (工作台动作后端)
 
-- [ ] **T3.1.1** [REQ-001]: 收口 handoff artifact 与已确认拥有列表的会话作用域闭环
+- [x] **T3.1.1** [REQ-001]: 收口 handoff artifact 与已确认拥有列表的会话作用域闭环
   - **描述**: 完成 `WorkbenchHandOffPayload` 构造、`ConfirmedOwnedSpiritList` 的 chat-scope 写入/读取，以及后续推荐约束触发点，使聊天链路能稳定承接到工作台。
   - **输入**: `.anws/v3/01_PRD.md` US-001 [REQ-001], US-002 [REQ-002]；`.anws/v3/03_ADR/ADR_003_SESSION_MANAGEMENT.md`；`.anws/v3/04_SYSTEM_DESIGN/agent-backend-system.md` §5-§6
   - **输出**: `src/agent_backend/runtime/*`、`src/agent_backend/app/session_service.py`、相关 route/runtime adapters
