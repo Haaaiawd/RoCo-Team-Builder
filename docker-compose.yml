@@ -1,0 +1,53 @@
+version: '3.8'
+
+services:
+  # Agent Backend System
+  agent-backend:
+    build:
+      context: .
+      dockerfile: src/agent_backend/Dockerfile
+    container_name: roco-agent-backend
+    ports:
+      - "8000:8000"
+    environment:
+      - ROCO_PROVIDER_MODEL=${ROCO_PROVIDER_MODEL:-gpt-4o}
+      - ROCO_PROVIDER_BASE_URL=${ROCO_PROVIDER_BASE_URL:-https://openrouter.ai/api/v1}
+      - ROCO_PROVIDER_API_KEY=${ROCO_PROVIDER_API_KEY}
+      - LOG_LEVEL=${LOG_LEVEL:-INFO}
+    env_file:
+      - .env
+    healthcheck:
+      test: ["CMD", "curl", "-f", "http://localhost:8000/healthz"]
+      interval: 30s
+      timeout: 10s
+      retries: 3
+      start_period: 40s
+    restart: unless-stopped
+    networks:
+      - roco-network
+
+  # Web UI System (Open WebUI with RoCo customizations)
+  web-ui:
+    image: ghcr.io/open-webui/open-webui:main
+    container_name: roco-web-ui
+    ports:
+      - "3000:8080"
+    environment:
+      - ENABLE_DIRECT_CONNECTIONS=true
+      - DEFAULT_MODELS=${ROCO_PROVIDER_MODEL:-gpt-4o}
+      - OPENAI_API_BASE_URL=http://agent-backend:8000/v1
+      - OPENAI_API_KEY=${ROCO_PROVIDER_API_KEY}
+      - DATA_DIR=/app/backend/data
+    volumes:
+      - ./src/web-ui-shell:/app/web-ui-shell:ro
+      - ./src/web-ui-shell/branding:/app/web-ui-shell/branding:ro
+    depends_on:
+      agent-backend:
+        condition: service_healthy
+    restart: unless-stopped
+    networks:
+      - roco-network
+
+networks:
+  roco-network:
+    driver: bridge

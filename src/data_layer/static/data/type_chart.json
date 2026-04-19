@@ -1,0 +1,129 @@
+{
+  "_meta": {
+    "description": "洛克王国：世界 属性克制表",
+    "source": "互联网公开攻略 + 手动整理校验（数据可与 BWIKI 交叉验证）",
+    "source_url": "https://wiki.biligame.com/rocokingdomworld/首页",
+    "last_updated": "2026-04-10",
+    "version": "1.0.0",
+    "notes": [
+      "克制倍率: 2.0x (super_effective)",
+      "抵抗倍率: 0.5x (not_very_effective)",
+      "未列出的属性对均为 1.0x (neutral)"
+    ]
+  },
+  "types": [
+    "火", "水", "草", "冰", "电", "毒", "地面", "岩石",
+    "钢", "龙", "恶", "幽", "光", "机械", "翼", "萌",
+    "虫", "格斗"
+  ],
+  "matchups": {
+    "火": {
+      "super_effective_against": ["草", "冰", "虫", "机械"],
+      "not_very_effective_from": [],
+      "weak_to": ["水", "岩石"],
+      "resists": []
+    },
+    "水": {
+      "super_effective_against": ["火", "岩石", "地面", "机械"],
+      "not_very_effective_from": [],
+      "weak_to": ["草", "电"],
+      "resists": []
+    },
+    "草": {
+      "super_effective_against": ["水", "岩石", "地面"],
+      "not_very_effective_from": [],
+      "weak_to": ["火", "冰", "毒", "翼", "虫"],
+      "resists": []
+    },
+    "冰": {
+      "super_effective_against": ["草", "龙", "地面", "翼"],
+      "not_very_effective_from": [],
+      "weak_to": ["火", "钢", "岩石"],
+      "resists": []
+    },
+    "电": {
+      "super_effective_against": ["水", "翼"],
+      "not_very_effective_from": [],
+      "weak_to": ["草", "电", "龙"],
+      "resists": []
+    },
+    "毒": {
+      "super_effective_against": ["草"],
+      "not_very_effective_from": [],
+      "weak_to": ["毒", "地面", "岩石", "幽"],
+      "resists": []
+    },
+    "地面": {
+      "super_effective_against": ["火", "电", "毒", "岩石", "钢"],
+      "not_very_effective_from": [],
+      "weak_to": ["草", "冰", "水"],
+      "resists": []
+    },
+    "岩石": {
+      "super_effective_against": ["火", "冰", "翼", "虫"],
+      "not_very_effective_from": [],
+      "weak_to": ["水", "草", "地面", "钢"],
+      "resists": []
+    },
+    "钢": {
+      "super_effective_against": ["冰", "岩石"],
+      "not_very_effective_from": [],
+      "weak_to": ["火", "电", "水"],
+      "resists": []
+    },
+    "龙": {
+      "super_effective_against": ["龙"],
+      "not_very_effective_from": [],
+      "weak_to": ["冰", "龙"],
+      "resists": []
+    },
+    "恶": {
+      "super_effective_against": ["幽", "光"],
+      "not_very_effective_from": [],
+      "weak_to": ["格斗", "虫", "光"],
+      "resists": []
+    },
+    "幽": {
+      "super_effective_against": ["光", "幽"],
+      "not_very_effective_from": [],
+      "weak_to": ["恶", "光"],
+      "resists": []
+    },
+    "光": {
+      "super_effective_against": ["幽", "恶"],
+      "not_very_effective_from": [],
+      "weak_to": ["幽", "光"],
+      "resists": []
+    },
+    "机械": {
+      "super_effective_against": [],
+      "not_very_effective_from": ["草", "毒", "龙", "幽"],
+      "weak_to": ["火", "电", "冰"],
+      "resists": []
+    },
+    "翼": {
+      "super_effective_against": ["虫", "草", "格斗"],
+      "not_very_effective_from": ["虫", "草", "格斗"],
+      "weak_to": ["电", "冰", "岩石"],
+      "resists": []
+    },
+    "萌": {
+      "super_effective_against": [],
+      "not_very_effective_from": ["水", "火", "草"],
+      "weak_to": ["恶", "幽", "龙"],
+      "resists": []
+    },
+    "虫": {
+      "super_effective_against": [],
+      "not_very_effective_from": [],
+      "weak_to": [],
+      "resists": []
+    },
+    "格斗": {
+      "super_effective_against": [],
+      "not_very_effective_from": [],
+      "weak_to": [],
+      "resists": []
+    }
+  }
+}

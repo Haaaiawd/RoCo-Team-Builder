@@ -1,0 +1,52 @@
+{
+  "glossary": {
+    "精灵": "洛克王国世界中的战斗单位，类似宝可梦，具有种族值、系别、技能、血脉、天分、性格等属性",
+    "种族值": "精灵固定的6维基础属性上限（物攻/魔攻/物防/魔防/速度/生命），决定精灵定位，同种精灵相同",
+    "天分/个体资质": "精灵的个体差异属性加成，最多3项加成，共4档（了不起最佳），可通过道具修改",
+    "血脉": "决定精灵可使用技能池的属性，分为首领/系别/污染/奇异四种，可通过血脉秘药修改",
+    "性格": "精灵的性格属性，提升一项降低一项属性，可通过道具修改",
+    "系别": "精灵的属性类型，共17种（草/火/水/光/地/冰/龙/电/毒/虫/武/翼/萌/幽/恶/机械/幻），存在克制关系",
+    "魔力值": "PVP对战胜负判定，双方各4点，每击倒对方一只精灵扣1点，归零判负",
+    "进化之力": "类似MEGA进化的共鸣魔法，首领血脉精灵专属，临时进化为更强形态",
+    "愿力强化": "类似Z招式的共鸣魔法，每场最多使用2次，3回合CD",
+    "共鸣魔法": "对战中的特殊强化机制，包含进化之力、星星魔法、愿力强化",
+    "配队": "选择并搭配6只精灵组成战斗队伍的行为",
+    "核心精灵": "用户指定的、队伍围绕其打法设计的1-3只主力精灵",
+    "BWIKI": "wiki.biligame.com/rocom/，哔哩哔哩维护的洛克王国世界中文Wiki，CC BY-NC-SA 4.0协议"
+  },
+  "entities": [
+    { "name": "Spirit", "type": "聚合根", "necessity": "必须", "description": "精灵实体，包含名称、系别、种族值、技能池、血脉类型、进化链、捕获点位等完整信息" },
+    { "name": "SpiritInstance", "type": "值对象", "necessity": "必须", "description": "用户拥有的具体精灵实例，包含性格、天分档次、是否已进化等用户相关状态" },
+    { "name": "Team", "type": "聚合根", "necessity": "必须", "description": "由最多6只精灵组成的战斗队伍，含配队思路和打法说明" },
+    { "name": "TypeMatchup", "type": "值对象", "necessity": "必须", "description": "17×17属性克制关系矩阵，本地预载的静态知识" },
+    { "name": "User", "type": "实体", "necessity": "必须", "description": "使用系统的玩家，可以输入拥有的精灵列表（文字或截图）" },
+    { "name": "Session", "type": "实体", "necessity": "必须", "description": "用户与Agent的一次对话会话，保持上下文（已说明的精灵、模式、偏好）" },
+    { "name": "WikiPage", "type": "值对象", "necessity": "必须", "description": "BWIKI中精灵对应的页面数据，实时查询获取" }
+  ],
+  "flows": [
+    { "from": "User", "action": "输入精灵名字", "to": "Agent", "data": "精灵名称列表（文字）", "trigger": "用户发送消息" },
+    { "from": "User", "action": "上传截图", "to": "Agent", "data": "小程序精灵列表截图", "trigger": "用户上传图片" },
+    { "from": "Agent", "action": "识别截图", "to": "SpiritInstance列表", "data": "多模态LLM视觉识别", "trigger": "截图输入" },
+    { "from": "Agent", "action": "查询精灵数据", "to": "BWIKI", "data": "精灵名称", "trigger": "get_spirit_info工具调用" },
+    { "from": "Agent", "action": "分析弱点", "to": "TypeMatchup", "data": "精灵系别列表", "trigger": "配队推理" },
+    { "from": "Agent", "action": "补全队伍", "to": "Team", "data": "核心精灵+弱点分析+速度档位", "trigger": "suggest_team工具调用" },
+    { "from": "Agent", "action": "调整技能", "to": "Team", "data": "当前队伍技能配置", "trigger": "adjust_team_skills工具调用" },
+    { "from": "Agent", "action": "展示精灵卡片", "to": "User", "data": "精灵数据+BWIKI链接", "trigger": "工具调用完成后渲染UI" }
+  ],
+  "missing_components": [
+    { "component": "会话隔离", "category": "多用户", "priority": "高", "reason": "公开Web应用，多用户并发，各自上下文不能互串" },
+    { "component": "LLM Provider配置", "category": "配置管理", "priority": "高", "reason": "需要支持多模态模型（截图识别）和文本推理模型，可能不同Provider" },
+    { "component": "BWIKI限流/缓存", "category": "稳定性", "priority": "中", "reason": "实时查询BWIKI，高并发下可能触发限流，需要本地缓存层" },
+    { "component": "精灵名称模糊匹配", "category": "UX", "priority": "中", "reason": "用户可能输入错别字或简称（'恶狼'→'恶魔狼'），需要容错" },
+    { "component": "进化链推断", "category": "业务逻辑", "priority": "中", "reason": "用户的未进化精灵应被视为进化后可用，推荐时需考虑进化链" },
+    { "component": "费用控制", "category": "运营", "priority": "中", "reason": "公开部署后LLM API调用费用不可控，需要考虑限流或用量控制" },
+    { "component": "版本更新机制", "category": "维护", "priority": "低", "reason": "游戏版本迭代快，预载的克制表/机制知识需要能手动更新" }
+  ],
+  "clarifications": [
+    { "question": "用户定位是什么？", "answer": "公开Web应用，任何玩家可访问" },
+    { "question": "截图识别是核心功能还是增强？", "answer": "核心功能，通过多模态LLM实现，不需要独立OCR服务" },
+    { "question": "个体值是否纳入v1？", "answer": "不纳入v1，优先级：种族值>血脉/技能>性格>个体资质" },
+    { "question": "Agent框架？", "answer": "OpenAI Agents SDK（provider-agnostic，轻量）" },
+    { "question": "前端UI？", "answer": "Open WebUI（公开Web应用，支持Rich UI嵌入精灵卡片，Docker部署友好）" }
+  ]
+}

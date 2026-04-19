@@ -1,0 +1,115 @@
+{
+  "_meta": {
+    "description": "洛克王国：世界 宠物性格加成表",
+    "source": "互联网公开攻略 + 手动整理校验（数据可与 BWIKI 交叉验证）",
+    "source_url": "https://wiki.biligame.com/rocokingdomworld/首页",
+    "last_updated": "2026-04-10",
+    "version": "1.0.0",
+    "notes": [
+      "加成: +10% (boost), 减成: -10% (penalty), 无影响: null",
+      "stat_keys: attack, defense, magic_attack, magic_defense, speed"
+    ]
+  },
+  "natures": {
+    "孤僻": {
+      "category": "攻击型",
+      "boost": "attack",
+      "penalty": "defense"
+    },
+    "固执": {
+      "category": "攻击型",
+      "boost": "attack",
+      "penalty": "magic_attack"
+    },
+    "调皮": {
+      "category": "攻击型",
+      "boost": "attack",
+      "penalty": "magic_defense"
+    },
+    "勇敢": {
+      "category": "攻击型",
+      "boost": "attack",
+      "penalty": "speed"
+    },
+    "大胆": {
+      "category": "防御型",
+      "boost": "defense",
+      "penalty": "attack"
+    },
+    "淘气": {
+      "category": "防御型",
+      "boost": "defense",
+      "penalty": "magic_attack"
+    },
+    "无虑": {
+      "category": "防御型",
+      "boost": "defense",
+      "penalty": "magic_defense"
+    },
+    "悠闲": {
+      "category": "防御型",
+      "boost": "defense",
+      "penalty": "speed"
+    },
+    "保守": {
+      "category": "魔攻型",
+      "boost": "magic_attack",
+      "penalty": "attack"
+    },
+    "稳重": {
+      "category": "魔攻型",
+      "boost": "magic_attack",
+      "penalty": "defense"
+    },
+    "马虎": {
+      "category": "魔攻型",
+      "boost": "magic_attack",
+      "penalty": "magic_defense"
+    },
+    "冷静": {
+      "category": "魔攻型",
+      "boost": "magic_attack",
+      "penalty": "speed"
+    },
+    "沉着": {
+      "category": "魔抗型",
+      "boost": "magic_defense",
+      "penalty": "attack"
+    },
+    "温顺": {
+      "category": "魔抗型",
+      "boost": "magic_defense",
+      "penalty": "defense"
+    },
+    "慎重": {
+      "category": "魔抗型",
+      "boost": "magic_defense",
+      "penalty": "magic_attack"
+    },
+    "狂妄": {
+      "category": "魔抗型",
+      "boost": "magic_defense",
+      "penalty": "speed"
+    },
+    "胆小": {
+      "category": "速度型",
+      "boost": "speed",
+      "penalty": "attack"
+    },
+    "急躁": {
+      "category": "速度型",
+      "boost": "speed",
+      "penalty": "defense"
+    },
+    "开朗": {
+      "category": "速度型",
+      "boost": "speed",
+      "penalty": "magic_attack"
+    },
+    "天真": {
+      "category": "速度型",
+      "boost": "speed",
+      "penalty": "magic_defense"
+    }
+  }
+}

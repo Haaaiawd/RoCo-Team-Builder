@@ -1,0 +1,193 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>{{ card.display_name }} — 精灵卡片</title>
+  <style>
+    /* spirit-card-system v2 — roco_adventure_journal theme */
+    * { margin: 0; padding: 0; box-sizing: border-box; }
+    body { background: transparent; }
+    .spirit-card {
+      background: #F9F8F4;
+      color: #333333;
+      border: 1px solid rgba(51, 51, 51, 0.10);
+      border-radius: 20px;
+      box-shadow: 0 10px 30px rgba(45, 44, 42, 0.10);
+      padding: 24px;
+      max-width: 420px;
+      font-family: system-ui, -apple-system, "Segoe UI", sans-serif;
+      line-height: 1.5;
+    }
+    .spirit-card__header {
+      display: flex;
+      align-items: center;
+      gap: 12px;
+      margin-bottom: 16px;
+    }
+    .spirit-card__title {
+      border-left: 6px solid #F3C969;
+      padding-left: 12px;
+      font-size: 1.25rem;
+      font-weight: 700;
+    }
+    .spirit-card__type-badge {
+      display: inline-block;
+      background: rgba(243, 201, 105, 0.18);
+      border: 1px dashed rgba(51, 51, 51, 0.28);
+      border-radius: 9999px;
+      padding: 2px 10px;
+      font-size: 0.75rem;
+      color: #333;
+    }
+    .spirit-card__section {
+      margin-bottom: 14px;
+    }
+    .spirit-card__label {
+      font-size: 0.7rem;
+      color: #999;
+      letter-spacing: 0.05em;
+      margin-bottom: 6px;
+      text-transform: uppercase;
+    }
+    .spirit-card__stat-grid {
+      display: grid;
+      grid-template-columns: repeat(3, 1fr);
+      gap: 6px;
+    }
+    .spirit-card__stat-item {
+      text-align: center;
+      background: rgba(243, 201, 105, 0.08);
+      border-radius: 8px;
+      padding: 6px 4px;
+    }
+    .spirit-card__stat-value {
+      font-size: 1.1rem;
+      font-weight: 700;
+      color: #333;
+    }
+    .spirit-card__stat-label {
+      font-size: 0.65rem;
+      color: #999;
+    }
+    .spirit-card__skill-list {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 6px;
+    }
+    .spirit-card__skill-tag {
+      display: inline-block;
+      background: rgba(243, 201, 105, 0.18);
+      border: 1px dashed rgba(51, 51, 51, 0.28);
+      border-radius: 9999px;
+      padding: 3px 12px;
+      font-size: 0.8rem;
+    }
+    .spirit-card__evo-chain {
+      display: flex;
+      align-items: center;
+      gap: 6px;
+      flex-wrap: wrap;
+      font-size: 0.8rem;
+    }
+    .spirit-card__evo-node {
+      background: rgba(243, 201, 105, 0.12);
+      border-radius: 8px;
+      padding: 3px 10px;
+    }
+    .spirit-card__evo-arrow {
+      color: #ccc;
+      font-size: 0.7rem;
+    }
+    .spirit-card__divider {
+      border: none;
+      border-top: 1px dashed rgba(51, 51, 51, 0.15);
+      margin: 14px 0;
+    }
+    .spirit-card__source {
+      font-size: 0.7rem;
+      color: #999;
+    }
+    .spirit-card__source a {
+      color: #B8860B;
+      text-decoration: none;
+    }
+    .spirit-card__source a:hover {
+      text-decoration: underline;
+    }
+  </style>
+</head>
+<body>
+  <div class="spirit-card">
+    {# --- 标题 + 系别徽章 --- #}
+    <div class="spirit-card__header">
+      <h2 class="spirit-card__title">{{ card.display_name }}</h2>
+      {% for t in card.types %}
+      <span class="spirit-card__type-badge">{{ t }}</span>
+      {% endfor %}
+    </div>
+
+    {# --- 血脉 --- #}
+    {% if card.bloodline_type %}
+    <div class="spirit-card__section">
+      <div class="spirit-card__label">血脉</div>
+      <div>{{ card.bloodline_type }}</div>
+    </div>
+    {% endif %}
+
+    {# --- 种族值 --- #}
+    {% if stat_block and stat_block.mode != 'empty' %}
+    <div class="spirit-card__section">
+      <div class="spirit-card__label">种族值</div>
+      <div class="spirit-card__stat-grid">
+        {% for item in card.stat_items %}
+        {% if item.value is not none %}
+        <div class="spirit-card__stat-item">
+          <div class="spirit-card__stat-value">{{ item.value }}</div>
+          <div class="spirit-card__stat-label">{{ item.label }}</div>
+        </div>
+        {% endif %}
+        {% endfor %}
+      </div>
+    </div>
+    {% endif %}
+
+    {# --- 技能 --- #}
+    {% if card.skills %}
+    <div class="spirit-card__section">
+      <div class="spirit-card__label">技能</div>
+      <div class="spirit-card__skill-list">
+        {% for skill in card.skills %}
+        <span class="spirit-card__skill-tag" {% if skill.description %}title="{{ skill.description }}"{% endif %}>
+          {{ skill.name }}{% if skill.type %}<small style="color:#999;margin-left:4px">{{ skill.type }}</small>{% endif %}
+        </span>
+        {% endfor %}
+      </div>
+    </div>
+    {% endif %}
+
+    {# --- 进化链 --- #}
+    {% if card.evolution_chain %}
+    <div class="spirit-card__section">
+      <div class="spirit-card__label">进化链</div>
+      <div class="spirit-card__evo-chain">
+        {% for node in card.evolution_chain %}
+        {% if not loop.first %}<span class="spirit-card__evo-arrow">→</span>{% endif %}
+        <span class="spirit-card__evo-node">
+          {{ node.stage_name }}{% if node.condition %}<small style="color:#999;margin-left:4px">({{ node.condition }})</small>{% endif %}
+        </span>
+        {% endfor %}
+      </div>
+    </div>
+    {% endif %}
+
+    {# --- 来源 --- #}
+    {% if card.wiki_url %}
+    <hr class="spirit-card__divider">
+    <div class="spirit-card__source">
+      数据来源：<a href="{{ card.wiki_url }}" target="_blank" rel="noopener noreferrer">{{ card.source_label }}</a>
+    </div>
+    {% endif %}
+  </div>
+</body>
+</html>
