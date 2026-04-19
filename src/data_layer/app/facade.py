@@ -123,12 +123,30 @@ class DataLayerFacade:
         return result_list
 
     async def build_wiki_link(self, spirit_name: str) -> str:
-        """构造精灵 BWIKI 页面链接。
+        """构造 BWIKI 页面链接（带缓存）。
 
-        委托 SpiritRepository.build_wiki_link()。
-        原样透传 SpiritNotFoundError / AmbiguousSpiritNameError。
+        使用与 get_spirit_profile 相同的名称解析路径，
+        确保 wiki 深读链接与站内摘要对象一致。
         """
-        return await self._repository.build_wiki_link(spirit_name)
+        from ..cache.key_builder import build_cache_key
+
+        # 先解析名称，确保与摘要对象使用同一规范名
+        resolved = self._resolver.resolve(spirit_name)
+        canonical_name = resolved["canonical_name"]
+
+        # 检查缓存
+        cache_key = build_cache_key("wiki_link", canonical_name)
+        cached = self._cache.wiki_links.get(cache_key)
+        if cached is not None:
+            return cached
+
+        # 构造链接
+        wiki_url = await self._repository.build_wiki_link(canonical_name)
+
+        # 写入缓存
+        self._cache.wiki_links[cache_key] = wiki_url
+
+        return wiki_url
 
     # ------------------------------------------------------------------
     # 静态知识

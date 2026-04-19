@@ -19,6 +19,7 @@ from cachetools import TTLCache
 
 SPIRIT_PROFILE_TTL_SECONDS: int = 3600   # 精灵详情 1 小时
 SEARCH_RESULT_TTL_SECONDS: int = 600     # 搜索结果 10 分钟
+WIKI_LINK_TTL_SECONDS: int = 3600       # Wiki 链接 1 小时
 CACHE_MAX_ENTRIES: int = 500             # 最大缓存条目
 
 
@@ -39,8 +40,13 @@ class CacheRegistry:
             maxsize=CACHE_MAX_ENTRIES,
             ttl=SEARCH_RESULT_TTL_SECONDS,
         )
+        self.wiki_links: TTLCache = TTLCache(
+            maxsize=CACHE_MAX_ENTRIES,
+            ttl=WIKI_LINK_TTL_SECONDS,
+        )
 
     def clear_all(self) -> None:
         """清空所有缓存 — 用于测试或热重载。"""
         self.spirit_profiles.clear()
         self.search_results.clear()
+        self.wiki_links.clear()

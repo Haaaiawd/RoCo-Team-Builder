@@ -102,7 +102,7 @@ graph TD
 
 ### Phase 2: Integration (摘要与外链一致性)
 
-- [ ] **T1.2.1** [REQ-006]: 实现 Wiki 标识 / 深读链接与摘要字段对齐路径
+- [x] **T1.2.1** [REQ-006]: 实现 Wiki 标识 / 深读链接与摘要字段对齐路径
   - **描述**: 让数据层输出的 Wiki 标识、`wiki_url`、摘要基础字段与工作台 summary / 外链深读保持同一命名解析结果，避免站内摘要和外链目标错位。
   - **输入**: `.anws/v3/01_PRD.md` US-006 [REQ-006]；`.anws/v3/02_ARCHITECTURE_OVERVIEW.md` §3.5 Shared Objects；`.anws/v3/04_SYSTEM_DESIGN/data-layer-system.md` §4.2、§5.1、§6
   - **输出**: `src/data_layer/analysis/wiki_link_resolver.py` 或等效模块；facade 对齐后的 spirit summary fields；相关测试

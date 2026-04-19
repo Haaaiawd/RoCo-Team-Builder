@@ -9,25 +9,22 @@ from __future__ import annotations
 
 from typing import Any
 
+from ..wiki.endpoint_builder import build_wiki_link as _build_wiki_link
+
 
 def build_wiki_link(spirit_name: str) -> str:
-    """构造 BWIKI 页面链接。
+    """构造 BWIKI 页面链接（统一使用 endpoint_builder）。
 
     Args:
         spirit_name: 精灵规范名
 
     Returns:
-        BWIKI 页面 URL
+        BWIKI 页面 URL，空字符串表示无效输入
     """
     if not spirit_name:
         return ""
 
-    # BWIKI URL 格式: https://wiki.biligame.com/rocokingdomworld/{精灵名}
-    # 使用 URL 编码处理特殊字符
-    from urllib.parse import quote
-
-    encoded_name = quote(spirit_name)
-    return f"https://wiki.biligame.com/rocokingdomworld/{encoded_name}"
+    return _build_wiki_link(spirit_name)
 
 
 def build_wiki_targets(spirit_profiles: list[dict]) -> list[dict]:
