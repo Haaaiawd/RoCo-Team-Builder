@@ -155,7 +155,7 @@ graph TD
 
 ### Phase 2: Polish (契约与降级验证)
 
-- [ ] **T2.2.1** [REQ-004]: 建立卡片渲染的契约测试与降级测试
+- [x] **T2.2.1** [REQ-004]: 建立卡片渲染的契约测试与降级测试
   - **描述**: 为聊天 Rich UI 卡片与工作台 summary mode 建立合同测试、失败降级测试和渲染最小完整性检查。
   - **输入**: `.anws/v3/01_PRD.md` US-004 [REQ-004]；`.anws/v3/04_SYSTEM_DESIGN/spirit-card-system.md` §11；T2.1.1、T2.1.2 产出
   - **输出**: `tests/unit/`、`tests/integration/` 中与 `spirit_card` 相关的新增测试资产

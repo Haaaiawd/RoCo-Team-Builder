@@ -132,6 +132,9 @@ T1.2.1 (Completed 2026-04-19)
 ### 🌊 Wave 3 — Summary Card Mode 展示字段 ✅
 T2.1.2 (Completed 2026-04-19)
 
+### 🌊 Wave 4 — 卡片渲染契约测试与降级测试 ✅
+T2.2.1 (Completed 2026-04-19)
+
 <!-- AUTO:END -->
 
 ---
