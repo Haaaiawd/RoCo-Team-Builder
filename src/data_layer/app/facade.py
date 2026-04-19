@@ -12,8 +12,15 @@ from __future__ import annotations
 
 from dataclasses import asdict
 
-from .contracts import IDataLayerFacade
-from .errors import AmbiguousSpiritNameError, SpiritNotFoundError
+from .contracts import IDataLayerFacade, TeamDraft, TeamAnalysisSnapshot
+from .errors import (
+    AmbiguousSpiritNameError,
+    SpiritNotFoundError,
+    TeamAnalysisInputError,
+    TeamAnalysisDataGapError,
+    WikiUpstreamTimeoutError,
+    WikiParseError,
+)
 from ..cache.key_builder import build_cache_key
 from ..cache.registry import CacheRegistry
 from ..spirits.alias_index import AliasIndex
@@ -136,6 +143,57 @@ class DataLayerFacade:
         """静态机制知识读取 — 纯本地，不依赖网络。"""
         entry = self._knowledge_store.get_static_knowledge(topic_key)
         return asdict(entry)
+
+    async def analyze_team_draft(self, team_draft: dict) -> dict:
+        """分析队伍草稿，返回 TeamAnalysisSnapshot。
+
+        输入为 TeamDraft 共享领域字段（不含前端 UI 暂态）。
+        返回五类结构化分析区块，支持部分数据缺失降级。
+        失败时返回 TEAM_ANALYSIS_ 前缀的结构化错误。
+        """
+        from dataclasses import asdict
+
+        from ..analysis.draft_normalizer import normalize_team_draft
+        from ..analysis.snapshot_builder import analyze_team_draft as build_snapshot
+
+        # 1. 归一化草稿，剥离前端 UI 暂态字段
+        try:
+            normalized = normalize_team_draft(team_draft)
+        except TeamAnalysisInputError as exc:
+            # 重新抛出，保持错误语义
+            raise exc
+
+        slots = normalized.get("slots", [])
+
+        # 2. 获取每个槽位的精灵资料
+        spirit_profiles = []
+        missing_slots = []
+
+        for slot in slots:
+            spirit_name = slot.get("spirit_name")
+            if not spirit_name:
+                missing_slots.append(slot["slot_index"])
+                continue
+
+            try:
+                profile = await self._repository.get_spirit_profile(spirit_name)
+                spirit_profiles.append(asdict(profile))
+            except (SpiritNotFoundError, WikiUpstreamTimeoutError, WikiParseError):
+                # 部分资料缺失，记录但不中断
+                missing_slots.append(slot["slot_index"])
+
+        # 3. 构建分析快照
+        try:
+            snapshot = build_snapshot(
+                normalized_draft=normalized,
+                spirit_profiles=spirit_profiles,
+                missing_slots=missing_slots,
+            )
+        except TeamAnalysisDataGapError as exc:
+            # 数据严重不足，抛出结构化错误
+            raise exc
+
+        return asdict(snapshot)
 
 
 # 类型断言: DataLayerFacade 满足 IDataLayerFacade 协议

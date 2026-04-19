@@ -38,8 +38,9 @@ CARD_THEME_TOKENS = {
 
 
 def default_policy() -> RenderPolicy:
-    """返回 v2 默认渲染策略。"""
+    """返回 v3 默认渲染策略。"""
     return RenderPolicy(
+        render_target="chat_card",
         enable_chart_enhancement=CHART_POLICY["enabled_by_default"],
         max_visible_skills=CARD_RENDER_POLICY["max_visible_skills"],
         allow_external_assets=False,
@@ -55,6 +56,7 @@ def from_dict(data: dict | None) -> RenderPolicy:
 
     base = default_policy()
     return RenderPolicy(
+        render_target=data.get("render_target", base.render_target),
         enable_chart_enhancement=data.get(
             "enable_chart_enhancement", base.enable_chart_enhancement
         ),

@@ -75,194 +75,56 @@
 
 > **注意**: 这是项目文件中的保留部分，由 `/genesis`、`/blueprint` 和 `/forge` 自动维护。
 
-- **最新架构版本**: `.anws/v2`
-- **活动任务清单**: `.anws/v2/05_TASKS.md`
-- **待办任务数**: `5`（Level 3: 1, FIX: 4）
-- **最近一次更新**: `2026-04-16 — Wave 3 完成: T3.2.4, FIX-SECURITY-1, FIX-DOC-2, FIX-LOG-1, FIX-DOC-3`
+- **最新架构版本**: `.anws/v3`
+- **活动任务清单**: `.anws/v3/05_TASKS.md`
+- **待办任务数**: 20
+- **最近一次更新**: `2026-04-19 — v3 Blueprint 完成：05_TASKS.md 已生成，Sprint / INT / User Story Overlay 已落盘`
 
-### ✅ Wave 1 — Data Spine 基础脊柱 (COMPLETED)
-`T1.1.1` ✅, `T1.1.2` ✅, `T1.2.1` ✅
-
-### ✅ Wave 2 — Static Knowledge + Card Skeleton (COMPLETED)
-`T1.2.2` ✅, `T2.1.1` ✅
-
-### ✅ Wave 3 — Agent Backend Foundation (COMPLETED)
-`T3.1.1` ✅, `T3.1.2` ✅, `T2.2.1` ✅, `T3.2.1` ✅, `T3.2.2` ✅, `T3.2.3` ✅, `T3.2.4` ✅
-
-### 🔧 Phase 3 Integration (COMPLETED)
-`T3.3.1` ✅, `T3.3.2` ✅
-
-### ✅ Wave 4A — S3 集成验证 (COMPLETED)
-`INT-S3` ✅ (206 passed, 4 skipped; 验证报告: .anws/v2/INT_S3_VERIFICATION_REPORT.md)
-
-### ✅ Wave 4B — 后端集成验证 (COMPLETED)
-`INT-S1` ✅ (48 passed; 验证报告: .anws/v2/INT_S1_VERIFICATION_REPORT.md)
-`INT-S2` ✅ (62 passed; 验证报告: .anws/v2/INT_S2_VERIFICATION_REPORT.md)
-
-### ✅ Wave 4C — Web UI 壳层基础 (COMPLETED)
-`T4.1.1` ✅ (产品壳层骨架 + VisibleFeaturePolicy 真理源 + 复古冒险者手账风主题)
-`T4.1.2` ✅ (接入内置轨道与 BYOK 双轨设置)
-`T4.2.1` ✅ (打通聊天时间线、工具折叠卡片与 Rich UI 宿主)
-`T4.2.2` ✅ (白名单导航裁剪与复古手账主题覆写)
-`T4.2.3` ✅ (截图发送前能力预检与 builtin 配额提示)
-`T4.3.1` ✅ (关键用户故事 E2E、白名单回归与发布前检查)
-`INT-S4` ✅ (代码完成，待部署后执行 E2E 测试; 验证报告: .anws/v2/INT_S4_VERIFICATION_REPORT.md)
-
-### 🔧 Data-Layer Facade 接线修复 (COMPLETED)
-
-### ✅ System 5 — Deployment (COMPLETED)
-`T5.1.1` ✅ (Docker Compose 部署文档 + 冷启动演练验收: 2 分 20 秒)
-`DataLayerFacade` 4 个 NotImplementedError 接通 + `search_spirits` 新实现 + `NameResolver.canonical_names` 属性
-
-### 🌊 Wave 1 — Design Alignment: Quota + Session (COMPLETED)
-`FIX-QUOTA-1` ✅, `FIX-SESSION-1` ✅
-
-### 🌊 Wave 2 — Design Alignment: Runtime + Route + Doc (COMPLETED)
-`FIX-QUOTA-2` ✅, `FIX-RUNTIME-1` ✅, `FIX-ROUTE-1` ✅, `FIX-DOC-1` ✅
-
-### 🌊 Wave 3 — 架构审查报告修复（COMPLETED）
-`T3.2.4` ✅, `FIX-SECURITY-1` ✅, `FIX-DOC-2` ✅, `FIX-LOG-1` ✅, `FIX-DOC-3` ✅
-
-### 🌊 Wave 4A — 静态复核补充修复（COMPLETED）
-`FIX-BYOK-PERSISTENCE` ✅, `FIX-RECOGNITION-CLOSURE` ✅
-
-### 🌊 Wave 4B — 静态复核补充修复（COMPLETED）
-`FIX-SECURITY-NEGATIVE-TEST` ✅, `FIX-FRONTEND-CLOSURE` ✅
+### 🌱 Genesis v3 — 配队工作台闭环架构 (COMPLETED)
+- `01_PRD.md` ✅：双入口工作台、单草稿、JSON 主格式、站内摘要 + Wiki 深读、AI 分析评价与建议
+- `02_ARCHITECTURE_OVERVIEW.md` ✅：维持 4 系统边界，新增 `Team Workbench Host / Hand-off Layer`
+- `ADR_001_TECH_STACK.md` ✅：v3 采用“现有系统内结构升级”而非新增独立工作台系统
+- `ADR_005_WORKBENCH_SHARED_CONTRACT.md` ✅：定义 `TeamDraft / HandOff / ImportExport` 共享契约与 JSON 版本策略
+- `_research/genesis-team-workbench-research.md` ✅：完成对 `rocom.aoe.top` 与前端最佳实践的研究收敛
 
 ---
-
-## 🌳 项目结构 (Project Tree)
-
 > **注意**: 此部分由 `/genesis` 维护。
 
-```text
-src/
-├── __init__.py
-└── data_layer/             ← data-layer-system 实现
-    ├── app/
-    │   ├── contracts.py        ← IDataLayerFacade + 6 领域数据类
-    │   ├── errors.py           ← 8 结构化错误类
-    │   └── facade.py           ← Facade 骨架
-    ├── cache/
-    │   ├── registry.py         ← CacheRegistry (ADR-002)
-    │   └── key_builder.py      ← 统一缓存键
-    ├── spirits/
-    │   ├── name_resolver.py    ← 三级名称解析
-    │   ├── fuzzy_matcher.py    ← rapidfuzz 模糊匹配
-    │   ├── alias_index.py      ← 别名索引
-    │   └── repository.py       ← 精灵仓储
-    ├── wiki/
-    │   ├── gateway.py          ← httpx BWIKI 网关 (含速率限制+去重+退避)
-    │   ├── parser.py           ← wikitext 解析器
-    │   └── endpoint_builder.py ← URL/API 参数构造 (rocokingdomworld)
-    └── static/
-        ├── type_chart.py           ← TypeMatchupStore
-        ├── mechanism_knowledge.py  ← StaticKnowledgeStore
-        └── data/               ← 静态知识文件
-            ├── type_chart.json     ← 属性克制矩阵
-            ├── nature_chart.json   ← 性格加成表
-            └── ATTRIBUTION.md      ← 数据来源声明
-├── spirit_card/                ← spirit-card-system 实现
-│   ├── app/
-│   │   ├── contracts.py        ← SpiritCardModel + RenderPolicy + RenderedSpiritCard
-│   │   ├── facade.py           ← SpiritCardFacade
-│   │   └── render_policy.py    ← 策略工厂 + 配置常量
-│   ├── mapping/
-│   │   └── view_model_builder.py ← SpiritProfile → SpiritCardModel
-│   ├── rendering/
-│   │   ├── template_renderer.py ← Jinja2 渲染器 + 种族值可视化
-│   │   ├── sanitization.py     ← 内容清洗 (HTML 转义 + URL 白名单)
-│   │   ├── fallback_builder.py ← 文本降级构建器
-│   │   └── templates/spirit_card.html ← 手账风卡片模板
-│   └── assets/
-│       └── inline_tokens.py    ← 设计 Token (roco_adventure_journal)
-├── agent_backend/              ← agent-backend-system 实现
-│   ├── api/
-│   │   └── routes_openai.py    ← /v1/models + /healthz + /readyz
-│   ├── app/
-│   │   ├── model_catalog.py    ← 受控虚拟模型目录
-│   │   ├── session_service.py  ← 会话键解析 + 内存 Registry + 闲置清理
-│   │   └── request_context.py  ← ChatRequestContext
-│   ├── runtime/                ← Agent SDK 运行时
-│   │   ├── agent_factory.py    ← Team Builder Agent + owned_spirits 注入
-│   │   ├── provider_factory.py ← 按 ModelCatalog 构建 Provider / RunConfig
-│   │   ├── recognition_tool.py ← 截图识别确认流工具
-│   │   ├── runtime_service.py  ← run_agent_turn + run_agent_streamed
-│   │   ├── team_builder_tools.py ← 配队/技能调优工具链
-│   │   └── tool_registry.py    ← 运行时工具注册表
-│   ├── integrations/           ← 跨系统客户端
-│   │   ├── data_layer_client.py ← 数据层客户端
-│   │   └── spirit_card_client.py ← 精灵卡片客户端
-│   └── main.py                 ← FastAPI 应用入口
+- **架构总览**: `.anws/v3/02_ARCHITECTURE_OVERVIEW.md`
+- **ADR**: `.anws/v3/03_ADR/` (跨系统决策的唯一记录源)
+- **研究结论**: `.anws/v3/04_SYSTEM_DESIGN/_research/genesis-team-workbench-research.md`
+- **详细设计**:
+  - `web-ui-system`: 源码 `src/web-ui-shell/` → 设计 `.anws/v3/04_SYSTEM_DESIGN/web-ui-system.md`（待 /design-system 校准）
+  - `agent-backend-system`: 源码 `src/agent-backend/` → 设计 `.anws/v3/04_SYSTEM_DESIGN/agent-backend-system.md`（待 /design-system 校准）
+  - `data-layer-system`: 源码 `src/data-layer/` → 设计 `.anws/v3/04_SYSTEM_DESIGN/data-layer-system.md`（待 /design-system 校准）
+  - `spirit-card-system`: 源码 `src/spirit-card/` → 设计 `.anws/v3/04_SYSTEM_DESIGN/spirit-card-system.md`（待 /design-system 校准）
+- **任务清单**: `.anws/v3/05_TASKS.md`
 
-.anws/
-├── changelog/              (升级记录)
-├── v1/                     (上一版架构文档)
-└── v2/                     (当前架构文档)
-    ├── 00_MANIFEST.md      ✅
-    ├── 01_PRD.md           ✅
-    ├── 02_ARCHITECTURE_OVERVIEW.md  ✅
-    ├── 03_ADR/
-    │   ├── ADR_001_TECH_STACK.md    ✅
-    │   ├── ADR_002_DATA_LAYER_CACHE.md ✅
-    │   ├── ADR_003_SESSION_MANAGEMENT.md ✅
-    │   └── ADR_004_WEB_UI_PRUNING_STRATEGY.md ✅
-    ├── 04_SYSTEM_DESIGN/
-    │   ├── agent-backend-system.md        ✅
-    │   ├── agent-backend-system.detail.md ✅
-    │   ├── data-layer-system.md           ✅
-    │   ├── data-layer-system.detail.md    ✅
-    │   ├── spirit-card-system.md          ✅
-    │   ├── spirit-card-system.detail.md   ✅
-    │   ├── web-ui-system.md               ✅
-    │   ├── web-ui-system.detail.md        ✅
-    │   └── _research/*                    ✅
-    ├── 05_TASKS.md         ✅
-    └── 06_CHANGELOG.md     ✅
-
-design.md                   (早期草稿，已被 .anws/v2 取代)
-concept_model.json          → .anws/v2/concept_model.json
-```
-
----
-## 🧭 导航指南 (Navigation Guide)
-
-> **注意**: 此部分由 `/genesis` 维护。
-
-- **当前架构总览**: `.anws/v2/02_ARCHITECTURE_OVERVIEW.md`
-- **ADR**: `.anws/v2/03_ADR/` (跨系统决策的唯一记录源)
-- **详细设计**: `.anws/v2/04_SYSTEM_DESIGN/`
-- **任务清单**: `.anws/v2/05_TASKS.md`
-- **遇到架构问题**: 先查 `.anws/v2/03_ADR/`，再查对应 `04_SYSTEM_DESIGN/`
-
----
+### ADR ↔ SYSTEM_DESIGN 关系
+- **ADR** 记录跨系统决策（如技术栈、工作台共享契约）
+- **SYSTEM_DESIGN** §8 Trade-offs 引用 ADR，不复制决策内容
+- 修改 ADR 时，检查“影响范围”章节，确认引用该 ADR 的系统
 
 ### 技术栈决策
+- **Web UI**: Open WebUI 受控壳层 + Team Workbench Host
 - **Agent 后端**: OpenAI Agents SDK + FastAPI（Python 3.11）
-- **Web UI**: Open WebUI（Docker）作为受控产品壳层，而非全量平台
-- **BYOK**: Open WebUI Direct Connections + OpenRouter（Key 仅存 localStorage）
-- **数据层**: httpx + cachetools（BWIKI API）
-- **精灵卡片**: Jinja2 HTML + Chart.js（Open WebUI Rich UI 嵌入）
+- **数据层**: httpx + cachetools + 静态知识 + Team Analysis
+- **精灵卡片**: Jinja2 HTML + Summary Card Mode
 - **部署**: Docker Compose
 
 ### 系统边界
-- `web-ui-system`: 基于 Open WebUI 的受控产品壳层，负责对话 UI、截图上传、BYOK 与终端用户能力收敛 — 详细设计见 `.anws/v2/04_SYSTEM_DESIGN/web-ui-system.md`
-- `agent-backend-system`: FastAPI + Agents SDK，OpenAI 兼容接口、Agent 推理与工具调用编排 — 详细设计见 `.anws/v2/04_SYSTEM_DESIGN/agent-backend-system.md`
-- `data-layer-system`: BWIKI 客户端 + 本地缓存 + 静态知识，负责名称解析与结构化数据适配 — 详细设计见 `.anws/v2/04_SYSTEM_DESIGN/data-layer-system.md`
-- `spirit-card-system`: HTML 精灵卡片生成器
-
-### 活跃 ADR
-- **ADR-001**: 技术栈选型（OpenAI Agents SDK + Open WebUI 受控壳层 + OpenRouter BYOK）✅
-- **ADR-002**: 数据层缓存策略（cachetools 内存 TTL Cache）✅
-- **ADR-003**: 会话上下文管理（内存 Session + 单进程 + `user_id:chat_id`）✅
-- **ADR-004**: Web UI 裁剪与收敛策略（能力白名单，终端用户不可见无关入口）✅
+- `web-ui-system`: 双入口工作台、壳层导航、BYOK 受限直连、工作台动作编排
+- `agent-backend-system`: Agent 推理、Workbench Hand-off、AI 分析评价与建议
+- `data-layer-system`: 精灵结构化资料、Wiki 标识、队伍级结构化分析真理源
+- `spirit-card-system`: 聊天卡片与工作台摘要卡片统一渲染层
 
 ### 当前任务状态
-- 任务清单: .anws/v2/05_TASKS.md
-- 总任务数: 31, 已完成: 31, 待办: 0
-- Sprint 数: 4
-- Wave 状态: ✅ S1-S4 + Deployment + Design Alignment 全部完成
-- 最近更新: 2026-04-15 System 5 Design Alignment 全部完成
+- 任务清单: `.anws/v3/05_TASKS.md`
+- 当前阶段: v3 `/forge` Wave 1 执行中
+- 最近更新: 2026-04-19 v3 Blueprint 落盘
+
+### 🌊 Wave 1 — 共享契约与真理源收口 ✅
+T1.1.1, T1.1.2, T2.1.1 (Completed 2026-04-19)
 
 <!-- AUTO:END -->
 

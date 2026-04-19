@@ -65,9 +65,10 @@ def render_spirit_card(
     card_model: SpiritCardModel,
     policy: RenderPolicy,
 ) -> RenderedSpiritCard:
-    """一站式卡片渲染: 清洗 → 统计块 → fallback → HTML。
+    """一站式卡片渲染: 清洗 → 统计块 → fallback → HTML/summary。
 
     对齐: spirit-card-system.detail.md §3.3
+    v3 新增 summary_card 模式支持。
     fallback 文本在 HTML 生成之前就准备好，不是"失败再补救"。
     """
     safe_model = sanitize_spirit_content(card_model)
@@ -77,30 +78,47 @@ def render_spirit_card(
     )
     fallback_text = build_fallback_text(safe_model)
 
-    try:
-        template = _env.get_template("spirit_card.html")
-        html = template.render(
-            card=safe_model,
-            stat_block=stat_block,
-            policy=policy,
-        )
-    except Exception:
-        html = ""
+    html = ""
+    summary_payload = None
 
-    render_mode: str
-    if html and fallback_text:
-        render_mode = "html_with_text_fallback"
-    elif html:
-        render_mode = "rich_html"
+    if policy.render_target == "summary_card":
+        # 工作台摘要模式：生成 summary_payload 而非 HTML
+        summary_payload = {
+            "title": safe_model.display_name,
+            "types": safe_model.types,
+            "stat_items": safe_model.stat_items,
+            "skills": safe_model.skills,
+            "wiki_url": safe_model.wiki_url,
+            "source_label": safe_model.source_label,
+        }
+        render_mode = "summary_only"
     else:
-        render_mode = "text_only"
+        # 聊天卡片模式：生成 HTML
+        try:
+            template = _env.get_template("spirit_card.html")
+            html = template.render(
+                card=safe_model,
+                stat_block=stat_block,
+                policy=policy,
+            )
+        except Exception:
+            html = ""
+
+        if html and fallback_text:
+            render_mode = "html_with_text_fallback"
+        elif html:
+            render_mode = "rich_html"
+        else:
+            render_mode = "text_only"
 
     return RenderedSpiritCard(
         html=html,
+        summary_payload=summary_payload,
         fallback_text=fallback_text,
         render_mode=render_mode,
         metadata={
             "chart_enabled": stat_block.get("mode") == "chart",
             "has_wiki_link": bool(safe_model.wiki_url),
+            "render_target": policy.render_target,
         },
     )

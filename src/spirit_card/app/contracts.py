@@ -46,9 +46,11 @@ class RenderPolicy:
     """渲染策略 — 控制卡片增强/降级行为。
 
     agent-backend-system 可基于宿主条件动态调整。
+    v3 新增 render_target 字段支持 chat_card / summary_card 双模式。
     v2 默认值锁定 'roco_adventure_journal' 主题。
     """
 
+    render_target: Literal["chat_card", "summary_card"] = "chat_card"
     enable_chart_enhancement: bool = True
     max_visible_skills: int = 8
     allow_external_assets: bool = False
@@ -58,19 +60,21 @@ class RenderPolicy:
 
 @dataclass
 class RenderedSpiritCard:
-    """渲染产物包 — HTML + 降级文本 + 元数据。
+    """渲染产物包 — HTML + summary_payload + 降级文本 + 元数据。
 
     不是单一 HTML 字符串，便于上游在失败时仍保住可读性。
+    v3 新增 summary_payload 字段用于工作台摘要模式。
     """
 
     html: str
-    fallback_text: str
-    render_mode: Literal["rich_html", "html_with_text_fallback", "text_only"]
+    summary_payload: dict | None = None
+    fallback_text: str = ""
+    render_mode: Literal["rich_html", "html_with_text_fallback", "text_only", "summary_only"] = "rich_html"
     metadata: dict = field(default_factory=dict)
 
     def is_renderable(self) -> bool:
         """是否有可展示的内容。"""
-        return bool(self.html or self.fallback_text)
+        return bool(self.html or self.summary_payload or self.fallback_text)
 
 
 # ---------------------------------------------------------------------------

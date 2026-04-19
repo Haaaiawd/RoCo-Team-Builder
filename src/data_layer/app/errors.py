@@ -132,3 +132,26 @@ class KnowledgeTopicNotFoundError(DataLayerError):
 
     error_code: str = "STATIC_TOPIC_NOT_FOUND"
     retryable: bool = False
+
+
+# ---------------------------------------------------------------------------
+# TEAM_ANALYSIS_
+# ---------------------------------------------------------------------------
+
+
+class TeamAnalysisInputError(DataLayerError):
+    """队伍分析输入错误 — TeamDraft 字段缺失或格式无效。"""
+
+    error_code: str = "TEAM_ANALYSIS_INVALID_INPUT"
+    retryable: bool = False
+
+
+class TeamAnalysisDataGapError(DataLayerError):
+    """队伍分析数据缺口 — 部分精灵资料缺失，但输出了可计算部分。"""
+
+    error_code: str = "TEAM_ANALYSIS_PARTIAL_DATA_GAP"
+    retryable: bool = False
+
+    def __init__(self, message: str, *, missing_sections: list[str] | None = None):
+        super().__init__(message)
+        self.missing_sections = missing_sections or []
