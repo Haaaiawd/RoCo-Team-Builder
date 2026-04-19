@@ -39,6 +39,10 @@ class IDataLayerClient(Protocol):
         """属性克制计算。"""
         ...
 
+    async def analyze_team_draft(self, team_draft: dict) -> dict:
+        """队伍分析 — 生成 TeamAnalysisSnapshot。"""
+        ...
+
 
 class DataLayerClient:
     """DataLayerFacade 的适配器 — 实现 IDataLayerClient 协议。"""
@@ -119,3 +123,29 @@ class DataLayerClient:
         """属性克制计算 — 纯本地，不依赖网络。"""
         result = await self._facade.get_type_matchup(type_combo)
         return result
+
+    async def analyze_team_draft(self, team_draft: dict) -> dict:
+        """队伍分析 — 生成 TeamAnalysisSnapshot。
+
+        失败时返回错误信息，不泄漏内部异常堆栈。
+
+        Returns:
+            {
+                "success": bool,
+                "team_snapshot": dict | None,
+                "error_message": str | None,
+            }
+        """
+        try:
+            snapshot = await self._facade.analyze_team_draft(team_draft)
+            return {
+                "success": True,
+                "team_snapshot": snapshot,
+                "error_message": None,
+            }
+        except DataLayerError as exc:
+            return {
+                "success": False,
+                "team_snapshot": None,
+                "error_message": str(exc),
+            }

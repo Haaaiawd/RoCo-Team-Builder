@@ -107,3 +107,39 @@ def quota_exhausted_error(
         retryable=True,
         metadata=metadata or None,
     )
+
+
+def team_analysis_error(
+    reason: str = "队伍分析失败",
+    upstream_code: str | None = None,
+) -> ProductError:
+    """队伍分析错误 — 对齐 agent-backend-system.detail.md §3.11。"""
+    metadata: dict[str, Any] = {}
+    if upstream_code is not None:
+        metadata["upstream_code"] = upstream_code
+    return ProductError(
+        code="TEAM_ANALYSIS_FAILED",
+        message=f"队伍分析失败: {reason}",
+        status_code=500,
+        error_type="workbench_error",
+        retryable=False,
+        metadata=metadata or None,
+    )
+
+
+def team_ai_review_error(
+    reason: str = "AI 评价失败",
+    upstream_code: str | None = None,
+) -> ProductError:
+    """AI 评价错误 — 对齐 agent-backend-system.detail.md §3.12。"""
+    metadata: dict[str, Any] = {}
+    if upstream_code is not None:
+        metadata["upstream_code"] = upstream_code
+    return ProductError(
+        code="TEAM_AI_REVIEW_FAILED",
+        message=f"AI 评价失败: {reason}",
+        status_code=500,
+        error_type="workbench_error",
+        retryable=False,
+        metadata=metadata or None,
+    )

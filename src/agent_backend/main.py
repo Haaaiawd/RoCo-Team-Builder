@@ -15,6 +15,7 @@ from contextlib import asynccontextmanager
 from fastapi import FastAPI
 
 from .api.routes_openai import init_router, router
+from .api.routes_workbench import router as workbench_router
 from .app.model_catalog import ModelCatalog
 from .app.quota_guard import BuiltinQuotaPolicy, QuotaStore
 from .app.session_service import SESSION_POLICY, SessionRegistry
@@ -101,3 +102,4 @@ app = FastAPI(
 )
 
 app.include_router(router)
+app.include_router(workbench_router)

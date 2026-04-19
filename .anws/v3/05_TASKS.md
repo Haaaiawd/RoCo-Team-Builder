@@ -204,7 +204,7 @@ graph TD
   - **依赖**: T1.1.1
   - **优先级**: P0
 
-- [ ] **T3.1.2** [REQ-004]: 实现 `/v1/workbench/team-analysis` 与 `/v1/workbench/ai-review` 工作台动作路由
+- [x] **T3.1.2** [REQ-004]: 实现 `/v1/workbench/team-analysis` 与 `/v1/workbench/ai-review` 工作台动作路由
   - **描述**: 为 `agent-backend-system` 增加受控 workbench action routes、请求归一化、session key 解析、data-layer / LLM 调用与结构化错误映射。
   - **输入**: `.anws/v3/01_PRD.md` US-003 [REQ-003], US-004 [REQ-004]；`.anws/v3/04_SYSTEM_DESIGN/agent-backend-system.md` §4.3、§5.1-§5.3；T1.2.1、T2.2.1、T3.1.1 产出
   - **输出**: `src/agent_backend/api/routes_workbench.py`、`schemas_workbench.py`、normalizer / formatter / client wiring
