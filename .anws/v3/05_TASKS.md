@@ -302,7 +302,7 @@ graph TD
 
 ### Phase 2: Integration (摘要 / AI / 导入导出)
 
-- [ ] **T4.2.1** [REQ-004]: 实现 Summary Card Host、AI Action Bar 与 Wiki 深读交互
+- [x] **T4.2.1** [REQ-004]: 实现 Summary Card Host、AI Action Bar 与 Wiki 深读交互
   - **描述**: 在工作台中接入 `summary_payload` 渲染宿主、AI 分析按钮、失败不丢草稿提示、Wiki 深读跳转与摘要区降级展示。
   - **输入**: `.anws/v3/01_PRD.md` US-004 [REQ-004], US-006 [REQ-006]；`.anws/v3/04_SYSTEM_DESIGN/web-ui-system.md` §4.2、§5.1；T2.2.1、T4.1.2 产出
   - **输出**: `src/web-ui-shell` 下的 summary host、ai action bar、wiki link UX、error states

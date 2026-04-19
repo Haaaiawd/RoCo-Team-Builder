@@ -21,6 +21,9 @@
     type TeamAnalysisSnapshot
   } from "../draft-store";
   import AnalysisView from "../draft-store/AnalysisView.svelte";
+  import SummaryCardView from "../summary-card/SummaryCardView.svelte";
+  import AIActionBar from "../summary-card/AIActionBar.svelte";
+  import type { SummaryPayload } from "../summary-card/types";
 
   export let entryPoint: "sidebar" | "agent_handoff" = "sidebar";
   export let handoffPayload: WorkbenchHandOffPayload | null = null;
@@ -37,6 +40,7 @@
     last_error_code: null,
   };
   let hydrationError: string | null = null;
+  let summaryPayloads: Map<number, SummaryPayload> = new Map();
 
   // Hydrate draft from entry point
   $: if (entryPoint || handoffPayload !== undefined) {
@@ -152,6 +156,13 @@
                         {/each}
                       </div>
                     {/if}
+                    <!-- Summary Card View -->
+                    {#if summaryPayloads.has(slot.slot_index)}
+                      <SummaryCardView 
+                        summaryPayload={summaryPayloads.get(slot.slot_index)}
+                        spiritName={slot.spirit_name || ""}
+                      />
+                    {/if}
                   </div>
                 {:else}
                   <div class="slot-empty">空槽位</div>
@@ -178,6 +189,14 @@
           snapshot={storeState.analysis_snapshot}
           isLoading={uiState.analysis_status === "refreshing"}
           error={storeState.analysis_error}
+        />
+      </section>
+
+      <!-- AI Action Bar -->
+      <section class="ai-action-section">
+        <AIActionBar 
+          draft={draft}
+          analysisSnapshot={storeState.analysis_snapshot}
         />
       </section>
 
@@ -399,5 +418,9 @@
     text-align: center;
     padding: 2rem;
     color: #6b7280;
+  }
+
+  .ai-action-section {
+    margin-top: 1rem;
   }
 </style>
