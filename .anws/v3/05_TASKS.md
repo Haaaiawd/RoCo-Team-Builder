@@ -236,7 +236,7 @@ graph TD
   - **依赖**: T3.1.2
   - **优先级**: P1
 
-- [ ] **T3.2.2** [REQ-001]: 建立后端关键路径的安全与集成测试门槛
+- [x] **T3.2.2** [REQ-001]: 建立后端关键路径的安全与集成测试门槛
   - **描述**: 为模型目录、Chat Completions、workbench actions、internal secret、header 转发、quota 与 session 隔离补齐集成/回归测试。
   - **输入**: `.anws/v3/03_ADR/ADR_003_SESSION_MANAGEMENT.md`；`.anws/v3/04_SYSTEM_DESIGN/agent-backend-system.md` §9-§11；T3.1.1、T3.1.2、T3.2.1 产出
   - **输出**: `tests/integration/test_agent_backend_routes.py` 及新增 workbench / security / quota 测试文件
