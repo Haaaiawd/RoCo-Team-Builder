@@ -170,7 +170,7 @@ graph TD
   - **依赖**: T2.1.2
   - **优先级**: P1
 
-- [ ] **INT-S1** [MILESTONE]: S1 集成验证 — Domain Spine
+- [x] **INT-S1** [MILESTONE]: S1 集成验证 — Domain Spine
   - **描述**: 验证 `data-layer-system` 与 `spirit-card-system` 已形成可复用的 v3 领域脊柱
   - **输入**: T1.1.1, T1.1.2, T1.2.1, T2.1.1, T2.1.2, T2.2.1 的产出
   - **输出**: `.anws/v3/INT_S1_VERIFICATION_REPORT.md`（新增或覆盖）

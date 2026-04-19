@@ -135,6 +135,9 @@ T2.1.2 (Completed 2026-04-19)
 ### 🌊 Wave 4 — 卡片渲染契约测试与降级测试 ✅
 T2.2.1 (Completed 2026-04-19)
 
+### 🌊 Wave 5 — S1 集成验证 (Milestone) ✅
+INT-S1 (Completed 2026-04-19)
+
 <!-- AUTO:END -->
 
 ---
