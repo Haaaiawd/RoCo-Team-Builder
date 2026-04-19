@@ -251,7 +251,7 @@ graph TD
   - **依赖**: T3.2.1
   - **优先级**: P0
 
-- [ ] **INT-S2** [MILESTONE]: S2 集成验证 — Backend Closure
+- [x] **INT-S2** [MILESTONE]: S2 集成验证 — Backend Closure
   - **描述**: 验证 `agent-backend-system` 已能作为 v3 的内置轨道与工作台动作后端运行
   - **输入**: T3.1.1, T3.1.2, T3.2.1, T3.2.2 的产出
   - **输出**: `.anws/v3/INT_S2_VERIFICATION_REPORT.md`（新增或覆盖）
