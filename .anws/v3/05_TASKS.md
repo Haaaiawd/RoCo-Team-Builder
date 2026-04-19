@@ -270,7 +270,7 @@ graph TD
 
 ### Phase 1: Core Components (工作台宿主)
 
-- [ ] **T4.1.1** [REQ-001]: 实现双入口 Team Workbench Host 与 handoff fallback 进入路径
+- [x] **T4.1.1** [REQ-001]: 实现双入口 Team Workbench Host 与 handoff fallback 进入路径
   - **描述**: 在 `web-ui-system` 中实现侧边栏入口、聊天结果承接入口、空白草稿创建与 `HANDOFF_` 失败时的空草稿兜底。
   - **输入**: `.anws/v3/01_PRD.md` US-001 [REQ-001]；`.anws/v3/04_SYSTEM_DESIGN/web-ui-system.md` §4.2-§4.3、§5.1；T3.1.1 产出
   - **输出**: `src/web-ui-shell` 下的 workbench route / host / handoff hydration 相关前端模块
