@@ -20,8 +20,10 @@ from .app.model_catalog import ModelCatalog
 from .app.quota_guard import BuiltinQuotaPolicy, QuotaStore
 from .app.session_service import SESSION_POLICY, SessionRegistry
 from .integrations.data_layer_client import DataLayerClient
+from .integrations.spirit_card_client import SpiritCardClient
 from .runtime.agent_factory import AgentFactory
 from data_layer.app.facade import DataLayerFacade
+from spirit_card.app.facade import SpiritCardFacade
 
 
 async def _session_janitor(registry: SessionRegistry, interval_seconds: int = 300) -> None:
@@ -50,6 +52,10 @@ async def lifespan(app: FastAPI):
     # 2. 数据层
     facade = DataLayerFacade()
     app.state.data_facade = facade
+
+    # 2.5 精灵卡片系统
+    card_facade = SpiritCardFacade()
+    app.state.card_facade = card_facade
 
     # 3. 会话管理
     session_registry = SessionRegistry()
@@ -92,6 +98,8 @@ async def lifespan(app: FastAPI):
 
     # 清理: 关闭 WikiGateway 的 httpx 连接池
     await facade._repository._gateway.close()
+    # 清理: 关闭 card_facade 的资源（如果需要）
+    # (SpiritCardFacade 目前无需要清理的资源)
 
 
 app = FastAPI(
@@ -102,4 +110,5 @@ app = FastAPI(
 )
 
 app.include_router(router)
+app.include_router(workbench_router)
 app.include_router(workbench_router)

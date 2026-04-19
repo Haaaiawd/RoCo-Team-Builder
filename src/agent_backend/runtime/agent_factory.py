@@ -22,6 +22,7 @@ except ImportError:
     Agent = None  # type: ignore
 
 from ..integrations.data_layer_client import IDataLayerClient
+from ..integrations.spirit_card_client import ISpiritCardClient
 from .prompting import SKILL_TUNING_INSTRUCTIONS, TEAM_BUILDER_INSTRUCTIONS
 from .team_builder_tools import TeamBuilderTools
 
@@ -72,6 +73,7 @@ class AgentFactory:
                 self._tools.search_spirits,
                 self._tools.get_type_matchup,
                 self._tools.get_static_knowledge,
+                self._tools.render_spirit_card,
             ],
         )
 

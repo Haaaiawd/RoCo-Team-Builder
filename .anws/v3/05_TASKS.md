@@ -221,7 +221,7 @@ graph TD
 
 ### Phase 2: Integration (运行时整合)
 
-- [ ] **T3.2.1** [REQ-004]: 把卡片渲染与工作台分析结果接入 Agent runtime / tool 响应
+- [x] **T3.2.1** [REQ-004]: 把卡片渲染与工作台分析结果接入 Agent runtime / tool 响应
   - **描述**: 让 runtime 在资料查询和工作台路径中稳定消费 `spirit-card-system` 渲染结果与 `data-layer-system` 分析结果，输出聊天 Rich UI、summary 或 AI review 所需结构。
   - **输入**: `.anws/v3/01_PRD.md` US-004 [REQ-004], US-006 [REQ-006]；`.anws/v3/02_ARCHITECTURE_OVERVIEW.md` §4 关键闭环；T2.2.1、T3.1.2 产出
   - **输出**: `src/agent_backend/runtime/`、`src/agent_backend/integrations/` 中的 service wiring 与工具返回结构

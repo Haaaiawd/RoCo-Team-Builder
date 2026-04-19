@@ -25,13 +25,20 @@ except ImportError:
         return func
 
 from ..integrations.data_layer_client import IDataLayerClient
+from ..integrations.spirit_card_client import ISpiritCardClient
 
 
 class TeamBuilderTools:
     """配队工具集 — 包装 data-layer 能力为 Agent 可调用工具。"""
 
-    def __init__(self, data_client: IDataLayerClient, session_record: Any | None = None) -> None:
+    def __init__(
+        self,
+        data_client: IDataLayerClient,
+        card_client: ISpiritCardClient | None = None,
+        session_record: Any | None = None,
+    ) -> None:
         self._data_client = data_client
+        self._card_client = card_client
         self._session_record = session_record
         self._owned_spirits: list[str] = []
 
@@ -105,3 +112,46 @@ class TeamBuilderTools:
         用于配队和技能调优时的规则参考。
         """
         return await self._data_client.get_static_knowledge(topic_key)
+
+    @function_tool
+    async def render_spirit_card(
+        self,
+        spirit_name: Annotated[str, "精灵名称"],
+        render_mode: Annotated[str, "渲染模式：'chat_card' 或 'summary_card'"] = "chat_card",
+    ) -> dict:
+        """渲染精灵卡片。
+
+        返回渲染后的 HTML 卡片和 fallback 文本。
+        用于在聊天中展示精灵详细信息。
+        """
+        if self._card_client is None:
+            return {
+                "success": False,
+                "html": None,
+                "fallback_text": f"[卡片渲染不可用] {spirit_name}",
+                "render_mode": "text_only",
+                "metadata": {},
+                "error_message": "card_client not initialized",
+            }
+
+        # 先获取精灵资料
+        spirit_info = await self._data_client.get_spirit_info(spirit_name)
+
+        if not spirit_info.get("success"):
+            return {
+                "success": False,
+                "html": None,
+                "fallback_text": f"[精灵资料未找到] {spirit_name}",
+                "render_mode": "text_only",
+                "metadata": {},
+                "error_message": spirit_info.get("error_message", "精灵资料未找到"),
+            }
+
+        # 构建渲染策略
+        policy = {"render_target": render_mode}
+
+        # 渲染卡片
+        spirit_payload = spirit_info.get("spirit_profile", {})
+        rendered = await self._card_client.render_spirit_card(spirit_payload, policy=policy)
+
+        return rendered

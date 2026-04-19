@@ -83,25 +83,30 @@ async def review_team_draft(request: Request, payload: AIReviewRequest) -> Respo
 
     对齐: agent-backend-system.detail.md §3.12
 
-    注意: 当前为骨架实现，返回模拟响应。T3.2.1 将接入实际 LLM 调用。
+    注意: T3.2.1 阶段使用 snapshot 生成结构化建议，不调用 LLM。
     """
     try:
         # 解析 session key
         headers = dict(request.headers)
         session_key = resolve_session_key(headers)
 
-        # 骨架实现：返回模拟 AI 建议
-        # TODO: T3.2.1 接入实际 LLM 调用
+        # 使用 snapshot 生成结构化建议（不调用 LLM，基于 snapshot 分析）
+        snapshot = payload.team_snapshot
+        team_draft = payload.team_draft
+
+        # 基于 snapshot 生成建议
+        review_summary = _generate_review_from_snapshot(snapshot)
+        suggestions = _generate_suggestions_from_snapshot(snapshot)
+
         response = AIReviewResponse(
             schema_version="v1",
-            review_summary="队伍结构良好，建议补充属性多样性。",
-            suggestions=[
-                "建议增加火属性精灵以增强攻击",
-                "水属性精灵可作为防御补充",
-            ],
+            review_summary=review_summary,
+            suggestions=suggestions,
             metadata={
                 "session_key": session_key,
-                "snapshot_schema_version": payload.team_snapshot.get("schema_version"),
+                "snapshot_schema_version": snapshot.get("schema_version"),
+                "slots_count": len(team_draft.slots),
+                "uses_snapshot": True,
             },
         )
 
@@ -115,3 +120,60 @@ async def review_team_draft(request: Request, payload: AIReviewRequest) -> Respo
         return exc.to_response()
     except Exception as exc:
         return team_ai_review_error(reason=str(exc)).to_response()
+
+
+def _generate_review_from_snapshot(snapshot: dict) -> str:
+    """基于 snapshot 生成评价摘要（不调用 LLM）。"""
+    if not snapshot:
+        return "队伍分析快照为空，无法生成评价。"
+
+    schema_version = snapshot.get("schema_version")
+    if schema_version != "v1":
+        return f"队伍分析快照版本不匹配: {schema_version}"
+
+    # 检查 snapshot 中的关键部分
+    attack_distribution = snapshot.get("attack_distribution", {})
+    defense_focus = snapshot.get("defense_focus", {})
+    missing_data_notes = snapshot.get("missing_data_notes", [])
+
+    if missing_data_notes:
+        return f"队伍分析存在数据缺失: {', '.join(missing_data_notes)}"
+
+    status = attack_distribution.get("status", "unknown")
+    if status == "insufficient_data":
+        return "队伍数据不足，建议补充精灵资料后重新分析。"
+
+    # 基于可用数据生成评价
+    review_parts = []
+    if status == "balanced":
+        review_parts.append("队伍攻击分布均衡")
+    elif status == "focused":
+        review_parts.append("队伍攻击集中")
+    else:
+        review_parts.append("队伍攻击分布需优化")
+
+    return "，".join(review_parts) + "。"
+
+
+def _generate_suggestions_from_snapshot(snapshot: dict) -> list[str]:
+    """基于 snapshot 生成建议列表（不调用 LLM）。"""
+    suggestions = []
+
+    attack_distribution = snapshot.get("attack_distribution", {})
+    defense_focus = snapshot.get("defense_focus", {})
+
+    # 基于攻击分布生成建议
+    status = attack_distribution.get("status")
+    if status == "insufficient_data":
+        suggestions.append("建议补充精灵资料以获取更准确的分析")
+    elif status == "focused":
+        suggestions.append("建议增加属性多样性以提高队伍适应性")
+
+    # 基于防御重点生成建议
+    if defense_focus:
+        suggestions.append("建议根据防御重点调整队伍配置")
+
+    if not suggestions:
+        suggestions.append("队伍结构良好，可根据实际战斗需求微调")
+
+    return suggestions
