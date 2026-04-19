@@ -3,6 +3,7 @@
 
 对齐: spirit-card-system.detail.md §5.2 Card Visual Reference
 与 web-ui-system 视觉同源: roco_adventure_journal 主题。
+v3 新增 summary_mode 特定 token。
 """
 
 from __future__ import annotations
@@ -26,7 +27,22 @@ THEME_TOKENS: dict[str, str] = {
     "section_divider": "rgba(51, 51, 51, 0.15)",
 }
 
+# Summary Card Mode 特定 token (v3)
+SUMMARY_TOKENS: dict[str, str] = {
+    "summary_bg": "#FFFFFF",
+    "summary_border": "rgba(51, 51, 51, 0.08)",
+    "summary_radius": "8px",
+    "summary_title_color": "#333333",
+    "summary_label_color": "#666666",
+    "summary_link_color": "#1976D2",
+}
+
 
 def get_token(key: str, fallback: str = "") -> str:
     """获取设计 token 值。"""
     return THEME_TOKENS.get(key, fallback)
+
+
+def get_summary_token(key: str, fallback: str = "") -> str:
+    """获取 Summary Card Mode 专用 token 值。"""
+    return SUMMARY_TOKENS.get(key, fallback)

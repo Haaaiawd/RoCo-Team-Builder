@@ -138,7 +138,7 @@ graph TD
   - **依赖**: T1.1.2, T1.2.1
   - **优先级**: P1
 
-- [ ] **T2.1.2** [REQ-006]: 实现 Summary Card Mode 的展示字段、降级文本与 token 对齐
+- [x] **T2.1.2** [REQ-006]: 实现 Summary Card Mode 的展示字段、降级文本与 token 对齐
   - **描述**: 在不另起第二套展示协议的前提下，补齐工作台 summary payload 的字段选择、轻量视觉 token、fallback 与外链入口构造。
   - **输入**: `.anws/v3/01_PRD.md` US-006 [REQ-006]；`.anws/v3/04_SYSTEM_DESIGN/spirit-card-system.md` §4.2、§5.1、§7.2；T2.1.1 产出的 render contract
   - **输出**: `src/spirit_card/mapping/*`、`src/spirit_card/rendering/*`、`src/spirit_card/assets/inline_tokens.py` 中的 summary mode 实现

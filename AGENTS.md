@@ -129,6 +129,9 @@ T1.1.1, T1.1.2, T2.1.1 (Completed 2026-04-19)
 ### 🌊 Wave 2 — Wiki 标识与摘要字段对齐 ✅
 T1.2.1 (Completed 2026-04-19)
 
+### 🌊 Wave 3 — Summary Card Mode 展示字段 ✅
+T2.1.2 (Completed 2026-04-19)
+
 <!-- AUTO:END -->
 
 ---
