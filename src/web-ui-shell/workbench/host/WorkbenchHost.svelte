@@ -12,11 +12,21 @@
 <script lang="ts">
   import type { TeamDraft, WorkbenchHandOffPayload, TeamWorkbenchUiState } from "./types";
   import { hydrateWorkbenchFromEntry, saveDraft, clearDraft } from "./hydration";
+  import { 
+    mutateTeamDraft, 
+    initializeDraftStore, 
+    type DraftStoreState,
+    type DraftMutation,
+    refreshTeamAnalysis,
+    type TeamAnalysisSnapshot
+  } from "../draft-store";
+  import AnalysisView from "../draft-store/AnalysisView.svelte";
 
   export let entryPoint: "sidebar" | "agent_handoff" = "sidebar";
   export let handoffPayload: WorkbenchHandOffPayload | null = null;
 
   let draft: TeamDraft | null = null;
+  let storeState: DraftStoreState = initializeDraftStore();
   let uiState: TeamWorkbenchUiState = {
     handoff_status: "idle",
     analysis_status: "idle",
@@ -42,6 +52,36 @@
       uiState.last_error_code = error;
     } else {
       uiState.handoff_status = "ready";
+      // Initialize store state with hydrated draft
+      storeState = initializeDraftStore();
+      storeState.draft = hydratedDraft;
+    }
+  }
+
+  async function handleRefreshAnalysis() {
+    if (!draft) return;
+    
+    uiState.analysis_status = "refreshing";
+    
+    const { guard: updatedGuard, result } = await refreshTeamAnalysis(
+      draft,
+      storeState.guard
+    );
+    
+    storeState.guard = updatedGuard;
+    
+    if (result.status === "success" && result.snapshot) {
+      storeState.analysis_snapshot = result.snapshot;
+      storeState.analysis_error = null;
+      uiState.analysis_status = "ready";
+      // Update draft with new request ID
+      draft.last_analysis_request_id = result.request_id;
+    } else if (result.status === "stale_ignored") {
+      // Stale response - ignore, keep current state
+      uiState.analysis_status = "ready";
+    } else {
+      storeState.analysis_error = result.error || "Analysis failed";
+      uiState.analysis_status = "partial_error";
     }
   }
 
@@ -49,6 +89,7 @@
     clearDraft();
     draft = null;
     hydrationError = null;
+    storeState = initializeDraftStore();
   }
 
   function handleSaveDraft() {
@@ -119,6 +160,25 @@
             {/each}
           </div>
         {/if}
+      </section>
+
+      <!-- Analysis View -->
+      <section class="analysis-section">
+        <div class="analysis-header">
+          <h2>队伍分析</h2>
+          <button 
+            class="refresh-button"
+            on:click={handleRefreshAnalysis}
+            disabled={uiState.analysis_status === "refreshing"}
+          >
+            {uiState.analysis_status === "refreshing" ? "分析中..." : "刷新分析"}
+          </button>
+        </div>
+        <AnalysisView 
+          snapshot={storeState.analysis_snapshot}
+          isLoading={uiState.analysis_status === "refreshing"}
+          error={storeState.analysis_error}
+        />
       </section>
 
       <!-- Action Bar -->
@@ -217,6 +277,46 @@
     margin: 0 0 1rem 0;
     font-size: 1.125rem;
     color: #1f2937;
+  }
+
+  .analysis-section {
+    border: 1px solid #e5e7eb;
+    border-radius: 0.5rem;
+    padding: 1rem;
+    background-color: #f9fafb;
+  }
+
+  .analysis-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: 1rem;
+  }
+
+  .analysis-header h2 {
+    margin: 0;
+    font-size: 1.125rem;
+    color: #1f2937;
+  }
+
+  .refresh-button {
+    padding: 0.375rem 0.75rem;
+    border-radius: 0.375rem;
+    border: 1px solid #d1d5db;
+    background-color: white;
+    color: #374151;
+    font-weight: 500;
+    cursor: pointer;
+    font-size: 0.875rem;
+  }
+
+  .refresh-button:hover:not(:disabled) {
+    background-color: #f3f4f6;
+  }
+
+  .refresh-button:disabled {
+    opacity: 0.5;
+    cursor: not-allowed;
   }
 
   .empty-draft-hint {

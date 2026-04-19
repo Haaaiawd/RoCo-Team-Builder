@@ -285,7 +285,7 @@ graph TD
   - **依赖**: T3.1.1
   - **优先级**: P0
 
-- [ ] **T4.1.2** [REQ-003]: 实现 TeamDraft Store、分析刷新编排与旧结果保护
+- [x] **T4.1.2** [REQ-003]: 实现 TeamDraft Store、分析刷新编排与旧结果保护
   - **描述**: 实现工作台单草稿编辑态、分析刷新触发、loading / stale protection 与 `TeamAnalysisSnapshot` 回流展示，保证频繁编辑时以后一次有效结果为准。
   - **输入**: `.anws/v3/01_PRD.md` US-002 [REQ-002], US-003 [REQ-003]；`.anws/v3/04_SYSTEM_DESIGN/web-ui-system.md` §4.2、§5.1、§6；T4.1.1、T3.1.2 产出
   - **输出**: `src/web-ui-shell` 下的 draft store、analysis adapter、analysis view、local state guards
