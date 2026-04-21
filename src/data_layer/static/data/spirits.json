@@ -1,0 +1,91 @@
+{
+  "_meta": {
+    "description": "洛克王国：世界 精灵基础资料（本地离线子集）",
+    "source": "项目内手工整理（用于本地兜底查询）",
+    "last_updated": "2026-04-21",
+    "version": "1.0.0"
+  },
+  "spirits": [
+    {
+      "canonical_name": "彩蝶鲨",
+      "aliases": [],
+      "types": ["水", "翼"],
+      "skills": ["天洪", "水炮", "回旋风暴", "翼击"],
+      "bloodline_type": null,
+      "base_stats": {"hp": 92, "attack": 88, "defense": 82, "magic_attack": 96, "magic_defense": 88, "speed": 95},
+      "evolution_chain": []
+    },
+    {
+      "canonical_name": "星光狮",
+      "aliases": [],
+      "types": ["光", "电"],
+      "skills": ["加大功率", "超导", "天光", "虹光冲击"],
+      "bloodline_type": null,
+      "base_stats": {"hp": 94, "attack": 86, "defense": 86, "magic_attack": 102, "magic_defense": 92, "speed": 88},
+      "evolution_chain": []
+    },
+    {
+      "canonical_name": "水泡壳",
+      "aliases": [],
+      "types": ["水"],
+      "skills": ["落雨", "天洪", "泡沫幻影", "酶浓度调整"],
+      "bloodline_type": null,
+      "base_stats": {"hp": 110, "attack": 68, "defense": 108, "magic_attack": 78, "magic_defense": 102, "speed": 58},
+      "evolution_chain": []
+    },
+    {
+      "canonical_name": "卷毛鸭",
+      "aliases": [],
+      "types": ["草", "格斗"],
+      "skills": ["爆冲", "抽枝", "水刃", "有效预防"],
+      "bloodline_type": null,
+      "base_stats": {"hp": 86, "attack": 104, "defense": 74, "magic_attack": 62, "magic_defense": 76, "speed": 98},
+      "evolution_chain": []
+    },
+    {
+      "canonical_name": "利灯鱼",
+      "aliases": [],
+      "types": ["水", "电"],
+      "skills": ["加大功率", "落雨", "阻断", "防御"],
+      "bloodline_type": null,
+      "base_stats": {"hp": 82, "attack": 70, "defense": 75, "magic_attack": 102, "magic_defense": 92, "speed": 102},
+      "evolution_chain": []
+    },
+    {
+      "canonical_name": "岚鸟",
+      "aliases": [],
+      "types": ["翼"],
+      "skills": ["震击", "羽化加速", "俯冲猛击", "水刃"],
+      "bloodline_type": null,
+      "base_stats": {"hp": 84, "attack": 108, "defense": 72, "magic_attack": 66, "magic_defense": 74, "speed": 109},
+      "evolution_chain": []
+    },
+    {
+      "canonical_name": "圆号鱼",
+      "aliases": [],
+      "types": ["水", "电"],
+      "skills": ["落雨", "湿润印记", "聒噪", "能耗共振"],
+      "bloodline_type": null,
+      "base_stats": {"hp": 88, "attack": 64, "defense": 80, "magic_attack": 98, "magic_defense": 92, "speed": 95},
+      "evolution_chain": []
+    },
+    {
+      "canonical_name": "海豹船长",
+      "aliases": [],
+      "types": ["水", "格斗"],
+      "skills": ["舰首冲拳", "深海重锚", "防御", "逆流反击"],
+      "bloodline_type": null,
+      "base_stats": {"hp": 102, "attack": 100, "defense": 96, "magic_attack": 80, "magic_defense": 88, "speed": 78},
+      "evolution_chain": []
+    },
+    {
+      "canonical_name": "幽陨星兔",
+      "aliases": [],
+      "types": ["幽", "光"],
+      "skills": ["陨落标记", "星蚀减益", "灵跃", "湮光"],
+      "bloodline_type": null,
+      "base_stats": {"hp": 86, "attack": 72, "defense": 78, "magic_attack": 104, "magic_defense": 94, "speed": 103},
+      "evolution_chain": []
+    }
+  ]
+}

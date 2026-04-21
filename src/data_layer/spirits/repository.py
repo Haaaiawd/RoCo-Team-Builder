@@ -14,6 +14,7 @@ from ..cache.registry import CacheRegistry
 from ..wiki.endpoint_builder import build_wiki_link
 from ..wiki.gateway import WikiGateway
 from ..wiki.parser import WikiParser
+from .local_dex import load_local_spirit_profiles
 from .name_resolver import NameResolver
 
 
@@ -26,11 +27,13 @@ class SpiritRepository:
         wiki_gateway: WikiGateway,
         wiki_parser: WikiParser,
         cache_registry: CacheRegistry,
+        local_profiles: dict[str, SpiritProfile] | None = None,
     ) -> None:
         self._resolver = name_resolver
         self._gateway = wiki_gateway
         self._parser = wiki_parser
         self._cache = cache_registry
+        self._local_profiles = local_profiles if local_profiles is not None else load_local_spirit_profiles()
 
     async def get_spirit_profile(self, spirit_name: str) -> SpiritProfile:
         """获取精灵结构化资料。
@@ -51,6 +54,11 @@ class SpiritRepository:
         cached = self._cache.spirit_profiles.get(cache_key)
         if cached is not None:
             return cached
+
+        local_profile = self._local_profiles.get(canonical_name)
+        if local_profile is not None:
+            self._cache.spirit_profiles[cache_key] = local_profile
+            return local_profile
 
         wiki_url = build_wiki_link(canonical_name)
 

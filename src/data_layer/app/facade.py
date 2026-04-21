@@ -12,12 +12,13 @@ from __future__ import annotations
 
 from dataclasses import asdict
 
-from .contracts import IDataLayerFacade, SearchCandidate
+from .contracts import IDataLayerFacade
 from .errors import AmbiguousSpiritNameError, SpiritNotFoundError
 from ..cache.key_builder import build_cache_key
 from ..cache.registry import CacheRegistry
 from ..spirits.alias_index import AliasIndex
 from ..spirits.fuzzy_matcher import fuzzy_match
+from ..spirits.local_dex import load_local_aliases
 from ..spirits.name_resolver import NameResolver, normalize_text
 from ..spirits.repository import SpiritRepository
 from ..static.type_chart import TypeMatchupStore
@@ -47,7 +48,12 @@ class DataLayerFacade:
         self._knowledge_store = knowledge_store or StaticKnowledgeStore()
         self._cache = cache_registry or CacheRegistry()
 
-        self._resolver = name_resolver or NameResolver(AliasIndex())
+        if name_resolver is not None:
+            self._resolver = name_resolver
+        else:
+            alias_index = AliasIndex()
+            alias_index.load_aliases(load_local_aliases())
+            self._resolver = NameResolver(alias_index)
 
         if spirit_repository is not None:
             self._repository = spirit_repository
