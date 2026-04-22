@@ -1,7 +1,10 @@
 # RoCo Agent Backend - Python Dependencies
-# 版本要求与 pyproject.toml 保持一致 (>=0.0.7) 并与 agent-backend
-# 代码所依赖的 openai-agents API 契合。最小下限 0.14.0 对应
-# Runner.run_streamed / RawResponsesStreamEvent 的现代形态。
+#
+# 本文件被 Docker 镜像构建 (src/agent_backend/Dockerfile) 使用。
+# openai-agents 最小下限为 0.14.0，对应 Runner.run_streamed /
+# RawResponsesStreamEvent 的现代形态 —— agent_backend.runtime.chat_runtime
+# 依赖这些 API，低版本会直接 ImportError。
+# pyproject.toml 同步要求 >=0.14.0，避免本地 pip install -e . 落到旧版本。
 
 # Web Framework
 fastapi>=0.115.0
