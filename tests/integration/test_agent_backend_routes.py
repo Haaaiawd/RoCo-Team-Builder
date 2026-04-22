@@ -15,6 +15,68 @@ from agent_backend.main import app
 from agent_backend.app.model_catalog import ModelCatalog, ModelCatalogEntry
 
 
+class _FakeChatRuntime:
+    """测试用假 runtime：非流式返回固定 assistant 回复；流式产出两段 delta + [DONE]。"""
+
+    async def run_nonstream(self, context, session_record):
+        import time
+
+        session_record.add_item({"role": "assistant", "content": "ok"})
+        return {
+            "id": f"chatcmpl_{context.request_id}",
+            "object": "chat.completion",
+            "created": int(time.time()),
+            "model": context.model_entry.public_model_id,
+            "choices": [
+                {
+                    "index": 0,
+                    "message": {"role": "assistant", "content": "ok"},
+                    "finish_reason": "stop",
+                }
+            ],
+            "usage": {"prompt_tokens": 0, "completion_tokens": 0, "total_tokens": 0},
+        }
+
+    def stream(self, context, session_record):
+        async def _iter():
+            import json
+
+            session_record.add_item({"role": "assistant", "content": "hi there"})
+            yield (
+                "data: "
+                + json.dumps(
+                    {
+                        "id": f"chatcmpl_{context.request_id}",
+                        "object": "chat.completion.chunk",
+                        "model": context.model_entry.public_model_id,
+                        "choices": [
+                            {"index": 0, "delta": {"content": "hi "}, "finish_reason": None}
+                        ],
+                    },
+                    ensure_ascii=False,
+                )
+                + "\n\n"
+            )
+            yield (
+                "data: "
+                + json.dumps(
+                    {
+                        "id": f"chatcmpl_{context.request_id}",
+                        "object": "chat.completion.chunk",
+                        "model": context.model_entry.public_model_id,
+                        "choices": [
+                            {"index": 0, "delta": {"content": "there"}, "finish_reason": None}
+                        ],
+                    },
+                    ensure_ascii=False,
+                )
+                + "\n\n"
+            )
+            yield "data: [DONE]\n\n"
+
+        return _iter()
+
+
 @pytest.fixture
 async def client():
     """使用 httpx AsyncClient 测试 FastAPI 应用，手动触发 lifespan。"""
@@ -22,7 +84,7 @@ async def client():
     from agent_backend.app.model_catalog import ModelCatalog
 
     catalog = ModelCatalog()
-    init_router(catalog)
+    init_router(catalog, runtime_factory=lambda: _FakeChatRuntime())
     app.state.catalog = catalog
 
     transport = ASGITransport(app=app)
@@ -161,7 +223,8 @@ class TestChatCompletionsNormalization:
                         enabled=True,
                     )
                 ]
-            )
+            ),
+            runtime_factory=lambda: _FakeChatRuntime(),
         )
 
         resp = await client.post(
