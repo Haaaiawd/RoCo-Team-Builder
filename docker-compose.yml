@@ -1,4 +1,9 @@
-version: '3.8'
+# RoCo Team Builder — 双容器部署
+#
+# 本地第一次启动前需要：
+#   cp .env.example .env   # 并把 ROCO_PROVIDER_API_KEY 填上真实 key
+#
+# Compose V2（`docker compose`）已不需要 top-level `version`；移除以消除警告。
 
 services:
   # Agent Backend System
@@ -12,10 +17,11 @@ services:
     environment:
       - ROCO_PROVIDER_MODEL=${ROCO_PROVIDER_MODEL:-gpt-4o}
       - ROCO_PROVIDER_BASE_URL=${ROCO_PROVIDER_BASE_URL:-https://openrouter.ai/api/v1}
-      - ROCO_PROVIDER_API_KEY=${ROCO_PROVIDER_API_KEY}
+      - ROCO_PROVIDER_API_KEY=${ROCO_PROVIDER_API_KEY:-}
       - LOG_LEVEL=${LOG_LEVEL:-INFO}
     env_file:
-      - .env
+      - path: .env
+        required: false
     healthcheck:
       test: ["CMD", "curl", "-f", "http://localhost:8000/healthz"]
       interval: 30s
@@ -36,7 +42,7 @@ services:
       - ENABLE_DIRECT_CONNECTIONS=true
       - DEFAULT_MODELS=${ROCO_PROVIDER_MODEL:-gpt-4o}
       - OPENAI_API_BASE_URL=http://agent-backend:8000/v1
-      - OPENAI_API_KEY=${ROCO_PROVIDER_API_KEY}
+      - OPENAI_API_KEY=${ROCO_PROVIDER_API_KEY:-dummy}
       - DATA_DIR=/app/backend/data
     volumes:
       - ./src/web-ui-shell:/app/web-ui-shell:ro
