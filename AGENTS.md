@@ -87,7 +87,7 @@
 `T1.2.2` ✅, `T2.1.1` ✅
 
 ### 🌊 Wave 3 — Agent Backend Foundation (COMPLETED)
-`T3.1.1` ✅, `T3.1.2` ✅, `T2.2.1` ✅, `T3.2.1` ✅, `T3.2.2` ✅, `T3.2.3` ✅, `T3.2.4` ✅
+`T3.1.1` ✅, `T3.1.2` ✅, `T2.2.1` ✅, `T3.2.1` ✅, `T3.2.2` ✅, `T3.2.3` ✅, `T3.2.4` ⚠️ (owned_spirits 约束已完成；`recognize_spirit_list` 识别本体仍为硬编码 stub，未接多模态 LLM — 详见 05_TASKS.md)
 
 ### 🔧 Phase 3 Integration (COMPLETED)
 `T3.3.1` ✅, `T3.3.2` ✅
