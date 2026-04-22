@@ -9,9 +9,8 @@ T2.2.1 测试 — 卡片模板、内容清洗与文本降级。
 
 from __future__ import annotations
 
-import pytest
 
-from spirit_card.app.contracts import RenderPolicy, RenderedSpiritCard, SpiritCardModel
+from spirit_card.app.contracts import RenderedSpiritCard
 from spirit_card.app.facade import SpiritCardFacade
 from spirit_card.app.render_policy import default_policy
 from spirit_card.mapping.view_model_builder import build_spirit_card_model

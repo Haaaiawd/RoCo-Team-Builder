@@ -10,7 +10,7 @@ T1.2.1 集成测试 — 精灵仓储 + wiki 网关 + 解析器 + 缓存。
 
 from __future__ import annotations
 
-from unittest.mock import AsyncMock, patch
+from unittest.mock import AsyncMock
 
 import pytest
 

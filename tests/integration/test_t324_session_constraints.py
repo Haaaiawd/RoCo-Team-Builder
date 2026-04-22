@@ -15,7 +15,7 @@ from unittest.mock import AsyncMock
 import pytest
 
 from agent_backend.app.session_extensions import SessionRecordExtended
-from agent_backend.runtime.recognition_tool import RecognitionResult, recognize_spirit_list
+from agent_backend.runtime.recognition_tool import recognize_spirit_list
 from agent_backend.runtime.team_builder_tools import TeamBuilderTools
 
 
