@@ -9,20 +9,18 @@
 
 对齐: agent-backend-system.md §4.2 Tool Registry、§5.1 工具调用流程
 验收标准: T3.2.3 配队推理、追问、技能调优三条路径
+
+设计约束：
+本模块只暴露"纯 async 方法"，不直接使用 `@function_tool` 装饰。
+`@function_tool` 在 `openai-agents` 安装时会把方法包成 `FunctionTool`
+对象（不可直接 `await`），会破坏单元/集成测试对内部协程的直接调用。
+因此工具的 `FunctionTool` 包装由 `AgentFactory` 在构造 Agent 时统一完成，
+保证 `await tools.method(...)` 在任何环境下都可运行。
 """
 
 from __future__ import annotations
 
-from typing import Annotated, Callable
-
-try:
-    from agents import function_tool
-    AGENTS_AVAILABLE = True
-except ImportError:
-    AGENTS_AVAILABLE = False
-    def function_tool(func: Callable) -> Callable:  # type: ignore
-        """No-op decorator when agents package not available."""
-        return func
+from typing import Annotated, Any
 
 from ..integrations.data_layer_client import IDataLayerClient
 
@@ -45,7 +43,6 @@ class TeamBuilderTools:
             return self._session_record.get_owned_spirits()
         return self._owned_spirits
 
-    @function_tool
     async def get_spirit_info(
         self,
         spirit_name: Annotated[str, "精灵名称（支持别名或模糊匹配）"],
@@ -57,7 +54,6 @@ class TeamBuilderTools:
         """
         return await self._data_client.get_spirit_info(spirit_name)
 
-    @function_tool
     async def search_spirits(
         self,
         query: Annotated[str, "搜索关键词"],
@@ -71,18 +67,15 @@ class TeamBuilderTools:
         owned = self.get_owned_spirits()
         result = await self._data_client.search_wiki(query, limit=limit)
 
-        # 如果 owned_spirits 非空，过滤候选池
         if owned and result.get("success"):
             candidates = result.get("candidates", [])
             filtered = [c for c in candidates if c.get("canonical_name") in owned]
             result["candidates"] = filtered if filtered else candidates
-            # 如果过滤后为空，添加提示
             if not filtered and candidates:
                 result["warning"] = "推荐候选超出用户拥有列表，请确认是否放宽限制"
 
         return result
 
-    @function_tool
     async def get_type_matchup(
         self,
         type_combo: Annotated[list[str], "属性组合列表，如 ['火', '草']"],
@@ -94,7 +87,6 @@ class TeamBuilderTools:
         """
         return await self._data_client.get_type_matchup(type_combo)
 
-    @function_tool
     async def get_static_knowledge(
         self,
         topic_key: Annotated[str, "知识主题键，如 'type_chart', 'nature_chart'"],
