@@ -164,7 +164,7 @@ class TestSessionRegistry:
     def test_evict_idle_sessions(self):
         """闲置清理: 超时会话被移出。"""
         reg = SessionRegistry()
-        active = reg.get_or_create("active:c1")
+        reg.get_or_create("active:c1")
         idle = reg.get_or_create("idle:c1")
         idle.last_access_at = datetime.now(timezone.utc) - timedelta(minutes=31)
 

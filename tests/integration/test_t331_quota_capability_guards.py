@@ -9,7 +9,6 @@ T3.3.1 集成测试 — Builtin 配额守卫与视觉能力后端兜底。
 
 from __future__ import annotations
 
-import pytest
 
 from agent_backend.app.capability_guard import CapabilityDecision, check_vision_capability
 from agent_backend.app.quota_guard import (

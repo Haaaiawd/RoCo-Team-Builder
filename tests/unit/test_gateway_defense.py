@@ -5,11 +5,11 @@ WikiGateway 防御机制测试 — 速率限制、in-flight 去重、指数退�
 from __future__ import annotations
 
 import asyncio
-from unittest.mock import AsyncMock, patch, MagicMock
+from unittest.mock import AsyncMock, patch
 
 import pytest
 
-from data_layer.wiki.gateway import WikiGateway, RATE_LIMIT_MIN_INTERVAL
+from data_layer.wiki.gateway import WikiGateway
 from data_layer.app.errors import WikiUpstreamTimeoutError
 
 
@@ -77,7 +77,6 @@ class TestExponentialBackoff:
         gw._consecutive_failures = 3
         gw._last_request_time = 0.0
 
-        import time
         with patch("data_layer.wiki.gateway.asyncio.sleep", new_callable=AsyncMock) as mock_sleep:
             with patch("data_layer.wiki.gateway.time.monotonic", return_value=100.0):
                 await gw._wait_rate_limit()
