@@ -75,7 +75,7 @@
 - T3.2.2: 9 个集成测试（资料查询 + 卡片渲染）
 - T3.3.1: 14 个集成测试（配额守卫 + 能力守卫）
 - T3.3.2: 12 个集成测试（SSE 流式 + 会话隔离）
-- T3.2.4: 9 个集成测试（截图识别 + 会话约束）
+- T3.2.4: 9 个集成测试（截图识别 + 会话约束） — ⚠️ 实际覆盖的是 owned_spirits 约束链路；recognize_spirit_list 识别本体仍是硬编码 stub，见"遗留问题"
 - **总计**: 35 个新增集成测试
 
 ---
@@ -101,6 +101,13 @@
    - **影响**: 错误映射层未验证
    - **建议**: 可在后续测试中补充 mock 场景
 
+### 新增高优先级（2026-04-22 复核补登）
+5. **`recognize_spirit_list` 未接真实多模态 LLM**
+   - **位置**: `src/agent_backend/runtime/recognition_tool.py`
+   - **现状**: 函数体内只根据 `image_description` 字符串做子串匹配（`if "火神" in image_description`），从未调用任何视觉模型；集成测试用的"截图样本"是预先构造好的字符串描述，不是真实 image_url/base64。
+   - **影响**: AC "Given 用户上传精灵列表截图 → When Agent 调用 `recognize_spirit_list` → Then 返回结构化 `RecognitionResult`" 对真实截图场景未验证；T3.2.4 在本报告中原标 ✅，现修正为 ⚠️ 部分完成。
+   - **建议**: 单独任务接入多模态能力（应解析 `messages[].content[].image_url` 并调用 provider vision 模型），与 `CAPABILITY_VISION_UNSUPPORTED` 路径和配额守卫共同构成完整 S3 截图链路。
+
 ---
 
 ## 验证结论
@@ -116,6 +123,7 @@ S3 核心功能已实现并通过集成测试：
 ### 降级项
 1. 监控指标导出未实现（16 个指标全部缺失）
 2. 配队推理与技能调优端到端测试缺失
+3. **T3.2.4 的 `recognize_spirit_list` 是硬编码 stub**，未接真实多模态 LLM；见"遗留问题"第 5 条。owned_spirits 候选池约束与会话扩展已真正完成，本项仅降级"识别"本体。
 
 ### 建议
 1. **立即执行**: 继续推进 Wave 4B（Web UI 壳层基础）

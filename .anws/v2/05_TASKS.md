@@ -298,7 +298,7 @@ graph TD
   - **依赖**: T1.2.1, T1.2.2, T3.1.2
   - **优先级**: P0
 
-- [x] **T3.2.4** [REQ-002]: 实现截图识别确认流与 owned_spirits 会话约束
+- [~] **T3.2.4** [REQ-002]: 实现截图识别确认流与 owned_spirits 会话约束 — ⚠️ 部分完成：识别工具当前为硬编码 stub，未接真实多模态 LLM
   - **描述**: 在 Agent 收到图片后，先将多模态 LLM 识别出的精灵名称列表结构化为 `RecognitionResult`，以工具调用结果形式回传给前端展示并等待用户确认；用户确认后，将 `owned_spirits` 列表持久化到当前会话上下文；后续推理工具链在 `owned_spirits` 非空时，仅从该列表内推荐精灵，若确需列表外精灵，须先向用户询问
   - **输入**: `01_PRD.md` US-002 AC-1（识别清单确认）、AC-3（推荐不超出列表）；`02_ARCHITECTURE_OVERVIEW.md` §3.5 错误矩阵；`04_SYSTEM_DESIGN/agent-backend-system.md` §4.2 `Tool Registry`、§5.1 `run_agent_turn`、§6 数据模型；`03_ADR/ADR_003_SESSION_MANAGEMENT.md`（会话边界不新增并行状态源）；T3.1.2 产出的会话仓库、T3.2.1 产出的请求归一化器、T3.2.3 产出的配队工具链
   - **输出**: `src/agent-backend/runtime/recognition_tool.py`（`recognize_spirit_list` 工具，输出 `RecognitionResult`）、`src/agent-backend/app/session_extensions.py`（为 `SessionItem` 扩展 `owned_spirits: list[str]` 字段）、`src/agent-backend/runtime/team_builder_tools.py`（在配队工具链入口处读取 `owned_spirits` 并约束候选池）
@@ -321,6 +321,11 @@ graph TD
   - **估时**: 6h
   - **依赖**: T3.1.2, T3.2.1, T3.2.3
   - **优先级**: P0
+  - **⚠️ 实现现状（2026-04-22 复核）**:
+    - ✅ `owned_spirits` 会话约束链路已完整：`session_extensions.py` 字段 + `team_builder_tools.search_spirits` / `get_spirit_info` 的候选池约束 + 覆盖率集成测试（9 个）。
+    - ❌ `recognize_spirit_list` 工具是**硬编码 stub** —— 见 `src/agent_backend/runtime/recognition_tool.py`：当前实现只对字符串做 `"火神" in image_description` 这样的子串匹配，**没有接入任何多模态 LLM**，AC "返回结构化 `RecognitionResult`" 对真实截图场景不成立。
+    - 📌 未完成子项：多模态识别接入（输入 image_url / base64 → 调用 provider vision 模型 → 解析精灵名称列表与置信度），以及前端的 owned_spirits 确认卡片交互（T4.x 中涉及）。
+    - 📌 不降级候选池约束与 session 扩展 —— 那部分是真完成的；只把"识别"本体标为待完成。
 
 ### Phase 3: Integration (集成)
 
