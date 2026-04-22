@@ -87,3 +87,34 @@ def from_session_identity_error(exc: SessionIdentityError) -> ProductError:
         status_code=400,
         param="headers",
     )
+
+
+def quota_exhausted(
+    message: str = "本小时内置轨道额度已用完，请稍后重试或切换 BYOK 轨道",
+) -> ProductError:
+    return ProductError(
+        code="QUOTA_BUILTIN_EXHAUSTED",
+        message=message,
+        status_code=429,
+        param=None,
+        error_type="quota_exceeded",
+        retryable=True,
+    )
+
+
+def runtime_failure(
+    message: str = "后端 Agent 运行失败，请稍后重试",
+    *,
+    detail: str | None = None,
+) -> ProductError:
+    metadata: dict[str, Any] | None = None
+    if detail:
+        metadata = {"detail": detail}
+    return ProductError(
+        code="RUNTIME_AGENT_FAILED",
+        message=message,
+        status_code=500,
+        error_type="internal_error",
+        retryable=True,
+        metadata=metadata,
+    )
