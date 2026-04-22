@@ -94,7 +94,19 @@ injector.inject();
 
 ## 测试
 
-当前项目尚未配置前端测试环境（vitest/jest）。测试文件 `policy.test.ts` 提供了测试用例参考，需要配置测试框架后才能运行。
+已接入 **vitest + TypeScript**：
+
+```bash
+cd src/web-ui-shell
+npm install                 # 仅本目录，不污染仓库根
+npm run typecheck           # tsc --noEmit
+npm test                    # vitest run
+```
+
+- `**/*.vitest.ts`：真正可运行的 vitest 用例（当前仅 `guards/feature-whitelist/policy.vitest.ts` 冒烟）。
+- `**/*.test.ts`：历史 console.log 风格的 runner（导出 `runXxxTests()` 函数），不进 vitest include，留给后续独立 PR 迁移。
+
+`tsconfig.json` 开启 strict + DOM lib，目前 `tsc --noEmit` 对全部 `.ts` 零报错。
 
 ## 参考资料
 
